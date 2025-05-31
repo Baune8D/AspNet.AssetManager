@@ -5,7 +5,7 @@
 
 using System;
 using AspNetWebpack.Tests.Data;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;

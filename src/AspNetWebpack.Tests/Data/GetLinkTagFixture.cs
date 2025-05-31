@@ -4,7 +4,7 @@
 // </copyright>
 
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Html;
 using Moq;
 

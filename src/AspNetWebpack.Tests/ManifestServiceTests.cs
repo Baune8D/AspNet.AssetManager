@@ -9,7 +9,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using AspNetWebpack.Tests.Data;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using Xunit;
 

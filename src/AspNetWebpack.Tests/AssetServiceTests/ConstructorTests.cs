@@ -4,7 +4,7 @@
 // </copyright>
 
 using System;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using Xunit;
 

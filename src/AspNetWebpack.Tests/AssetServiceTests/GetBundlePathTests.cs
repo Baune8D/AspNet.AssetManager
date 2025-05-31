@@ -6,7 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using AspNetWebpack.Tests.Data;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace AspNetWebpack.Tests.AssetServiceTests;

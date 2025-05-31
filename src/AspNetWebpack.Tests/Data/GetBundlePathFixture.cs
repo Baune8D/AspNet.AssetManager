@@ -5,7 +5,7 @@
 
 using System.ComponentModel;
 using System.Threading.Tasks;
-using FluentAssertions;
+using AwesomeAssertions;
 
 namespace AspNetWebpack.Tests.Data;
 
