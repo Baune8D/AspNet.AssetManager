@@ -97,7 +97,13 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
     /// <returns>A string containing the link/style tag.</returns>
     public string BuildLinkTag(string file)
     {
-        return $"<link href=\"{_sharedSettings.AssetsWebPath}{file}\" rel=\"stylesheet\" />";
+        var crossOrigin = string.Empty;
+        if (_sharedSettings.DevelopmentMode)
+        {
+            crossOrigin = "crossorigin=\"anonymous\" ";
+        }
+
+        return $"<link href=\"{_sharedSettings.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
     }
 
     /// <summary>

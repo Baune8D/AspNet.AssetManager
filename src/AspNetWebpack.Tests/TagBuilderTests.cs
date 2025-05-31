@@ -134,7 +134,7 @@ public sealed class TagBuilderTests : IDisposable
     }
 
     [Fact]
-    public void BuildLinkTag_Default_ShouldReturnLinkTag()
+    public void BuildLinkTag_Development_ShouldReturnLinkTag()
     {
         // Arrange
         var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
@@ -144,13 +144,23 @@ public sealed class TagBuilderTests : IDisposable
         var result = _tagBuilder.BuildLinkTag(Bundle);
 
         // Assert
-        result.Should().StartWith("<link ")
-            .And.EndWith(" />")
-            .And.Contain($"href=\"{ValidBundleResult}\"")
-            .And.Contain("rel=\"stylesheet\"");
-        sharedSettingsMock.VerifyGet(x => x.AssetsWebPath, Times.Once);
-        sharedSettingsMock.VerifyNoOtherCalls();
-        _fileSystemMock.VerifyNoOtherCalls();
+        result.Should().Contain("crossorigin=\"anonymous\"");
+        VerifyLinkTag(result, sharedSettingsMock);
+    }
+
+    [Fact]
+    public void BuildLinkTag_Production_ShouldReturnLinkTag()
+    {
+        // Arrange
+        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production);
+        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildLinkTag(Bundle);
+
+        // Assert
+        result.Should().NotContain("crossorigin=\"anonymous\"");
+        VerifyLinkTag(result, sharedSettingsMock);
     }
 
     [Fact]
@@ -268,6 +278,18 @@ public sealed class TagBuilderTests : IDisposable
             .And.EndWith("</script>")
             .And.Contain($"src=\"{ValidBundleResult}\"");
         sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.Exactly(2));
+        sharedSettingsMock.VerifyGet(x => x.AssetsWebPath, Times.Once);
+        sharedSettingsMock.VerifyNoOtherCalls();
+        _fileSystemMock.VerifyNoOtherCalls();
+    }
+
+    private void VerifyLinkTag(string result, Mock<ISharedSettings> sharedSettingsMock)
+    {
+        result.Should().StartWith("<link ")
+            .And.EndWith(" />")
+            .And.Contain($"href=\"{ValidBundleResult}\"")
+            .And.Contain("rel=\"stylesheet\"");
+        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.Exactly(1));
         sharedSettingsMock.VerifyGet(x => x.AssetsWebPath, Times.Once);
         sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
