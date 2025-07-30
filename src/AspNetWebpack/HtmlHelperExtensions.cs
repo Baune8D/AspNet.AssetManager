@@ -29,9 +29,6 @@ public static class HtmlHelperExtensions
             .Split('/')
             .ToList();
         viewPaths.Remove(string.Empty);
-        viewPaths.Remove("Areas");
-        viewPaths.Remove("Views");
-        viewPaths.Remove("Pages");
         return string.Join("_", viewPaths);
     }
 }

@@ -33,7 +33,7 @@ public class HtmlHelperExtensionsTests
         var result = htmlHelper.GetBundleName();
 
         // Assert
-        result.Should().Be("Some_Page");
+        result.Should().Be("Views_Some_Page");
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public class HtmlHelperExtensionsTests
         var result = htmlHelper.GetBundleName();
 
         // Assert
-        result.Should().Be("Test_Some_Page");
+        result.Should().Be("Areas_Test_Views_Some_Page");
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class HtmlHelperExtensionsTests
         var result = htmlHelper.GetBundleName();
 
         // Assert
-        result.Should().Be("Some_Page");
+        result.Should().Be("Pages_Some_Page");
     }
 
     [Fact]
@@ -72,6 +72,6 @@ public class HtmlHelperExtensionsTests
         var result = htmlHelper.GetBundleName();
 
         // Assert
-        result.Should().Be("Test_Some_Page");
+        result.Should().Be("Areas_Test_Pages_Some_Page");
     }
 }
