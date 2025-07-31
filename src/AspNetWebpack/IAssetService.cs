@@ -16,12 +16,12 @@ public interface IAssetService
     /// <summary>
     /// Gets full directory path for assets.
     /// </summary>
-    string AssetsDirectoryPath { get; }
+    string DirectoryPath { get; }
 
     /// <summary>
     /// Gets web path for UI assets.
     /// </summary>
-    string AssetsWebPath { get; }
+    string WebPath { get; }
 
     /// <summary>
     /// Gets the full file path.

@@ -29,8 +29,8 @@ public sealed class AssetService : IAssetService
     {
         ArgumentNullException.ThrowIfNull(sharedSettings);
 
-        AssetsDirectoryPath = sharedSettings.AssetsDirectoryPath;
-        AssetsWebPath = sharedSettings.AssetsWebPath;
+        DirectoryPath = sharedSettings.AssetsDirectoryPath;
+        WebPath = sharedSettings.AssetsWebPath;
 
         _manifestService = manifestService;
         _tagBuilder = tagBuilder;
@@ -39,12 +39,12 @@ public sealed class AssetService : IAssetService
     /// <summary>
     /// Gets full directory path for assets.
     /// </summary>
-    public string AssetsDirectoryPath { get; }
+    public string DirectoryPath { get; }
 
     /// <summary>
     /// Gets web path for UI assets.
     /// </summary>
-    public string AssetsWebPath { get; }
+    public string WebPath { get; }
 
     /// <summary>
     /// Gets the full file path.
@@ -82,7 +82,7 @@ public sealed class AssetService : IAssetService
         var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
 
         return file != null
-            ? $"{AssetsWebPath}{file}"
+            ? $"{WebPath}{file}"
             : null;
     }
 

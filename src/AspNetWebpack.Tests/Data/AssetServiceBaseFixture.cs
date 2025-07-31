@@ -63,7 +63,7 @@ public abstract class AssetServiceBaseFixture
     /// <summary>
     /// Gets the full path of <see cref="ValidBundleResult"/>.
     /// </summary>
-    protected string ValidBundleResultPath => $"{AssetService.AssetsWebPath}{ValidBundleResult}";
+    protected string ValidBundleResultPath => $"{AssetService.WebPath}{ValidBundleResult}";
 
     /// <summary>
     /// Gets the full fallback test bundle filename including cache buster.
@@ -73,7 +73,7 @@ public abstract class AssetServiceBaseFixture
     /// <summary>
     /// Gets the full path of <see cref="ValidFallbackBundleResult"/>.
     /// </summary>
-    protected string ValidFallbackBundleResultPath => $"{AssetService.AssetsWebPath}{ValidFallbackBundleResult}";
+    protected string ValidFallbackBundleResultPath => $"{AssetService.WebPath}{ValidFallbackBundleResult}";
 
     private Mock<ISharedSettings> SharedSettingsMock { get; }
 

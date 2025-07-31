@@ -52,8 +52,8 @@ public sealed class ConstructorTests
         var result = new AssetService(sharedSettingsMock.Object, manifestServiceMock.Object, tagBuilderMock.Object);
 
         // Assert
-        result.AssetsDirectoryPath.Should().Be(assetsDirectoryPath);
-        result.AssetsWebPath.Should().Be(assetsWebPath);
+        result.DirectoryPath.Should().Be(assetsDirectoryPath);
+        result.WebPath.Should().Be(assetsWebPath);
         manifestServiceMock.VerifyNoOtherCalls();
         tagBuilderMock.VerifyNoOtherCalls();
     }
