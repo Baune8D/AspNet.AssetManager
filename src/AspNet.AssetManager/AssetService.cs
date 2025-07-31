@@ -1,0 +1,213 @@
+// <copyright file="AssetService.cs" company="Morten Larsen">
+// Copyright (c) Morten Larsen. All rights reserved.
+// Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
+// </copyright>
+
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Html;
+
+namespace AspNet.AssetManager;
+
+/// <summary>
+/// Service for including Webpack assets in UI projects.
+/// </summary>
+public sealed class AssetService : IAssetService
+{
+    private readonly IManifestService _manifestService;
+    private readonly ITagBuilder _tagBuilder;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AssetService"/> class.
+    /// </summary>
+    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="manifestService">Asset manifest service.</param>
+    /// <param name="tagBuilder">Asset builder service.</param>
+    public AssetService(ISharedSettings sharedSettings, IManifestService manifestService, ITagBuilder tagBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(sharedSettings);
+
+        DirectoryPath = sharedSettings.AssetsDirectoryPath;
+        WebPath = sharedSettings.AssetsWebPath;
+
+        _manifestService = manifestService;
+        _tagBuilder = tagBuilder;
+    }
+
+    /// <summary>
+    /// Gets the full directory path for assets.
+    /// </summary>
+    public string DirectoryPath { get; }
+
+    /// <summary>
+    /// Gets the web path for UI assets.
+    /// </summary>
+    public string WebPath { get; }
+
+    /// <summary>
+    /// Gets the full file path.
+    /// </summary>
+    /// <param name="bundle">The bundle filename.</param>
+    /// <param name="fileType">The bundle file type will append extension to bundle if specified.</param>
+    /// <returns>The full file path.</returns>
+    public async Task<string?> GetBundlePathAsync(string bundle, FileType? fileType = null)
+    {
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return null;
+        }
+
+        if (!Path.HasExtension(bundle) && !fileType.HasValue)
+        {
+            throw new InvalidOperationException("A file extension is needed either in bundle name or as file type parameter.");
+        }
+
+        if (fileType.HasValue)
+        {
+            if (Path.HasExtension(bundle))
+            {
+                throw new InvalidOperationException("If bundle name already has an extension then do not specify it again as file type parameter.");
+            }
+
+            bundle = fileType switch
+            {
+                FileType.CSS => $"{bundle}.css",
+                FileType.JS => $"{bundle}.js",
+                _ => throw new InvalidEnumArgumentException(nameof(fileType), (int)fileType, typeof(FileType)),
+            };
+        }
+
+        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+
+        return file != null
+            ? $"{WebPath}{file}"
+            : null;
+    }
+
+    /// <summary>
+    /// Gets an HTML script tag for the specified asset.
+    /// </summary>
+    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="load">Enum for modifying script load behavior.</param>
+    /// <returns>An HtmlString containing the HTML script tag.</returns>
+    public async Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal)
+    {
+        return await GetScriptTagAsync(bundle, null, load).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets an HTML script tag for the specified asset.
+    /// </summary>
+    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <param name="load">Enum for modifying script load behavior.</param>
+    /// <returns>An HtmlString containing the HTML script tag.</returns>
+    public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal)
+    {
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return HtmlString.Empty;
+        }
+
+        bundle = TryFixJsBundleName(bundle);
+        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+
+        if (file == null)
+        {
+            if (string.IsNullOrEmpty(fallback))
+            {
+                return HtmlString.Empty;
+            }
+
+            fallback = TryFixJsBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
+        }
+
+        return file != null
+            ? new HtmlString(_tagBuilder.BuildScriptTag(file, load))
+            : HtmlString.Empty;
+    }
+
+    /// <summary>
+    /// Gets an HTML link tag for the specified asset.
+    /// </summary>
+    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>An HtmlString containing the HTML link tag.</returns>
+    public async Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null)
+    {
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return HtmlString.Empty;
+        }
+
+        bundle = TryFixCssBundleName(bundle);
+        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+
+        if (file == null)
+        {
+            if (string.IsNullOrEmpty(fallback))
+            {
+                return HtmlString.Empty;
+            }
+
+            fallback = TryFixCssBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
+        }
+
+        return file != null
+            ? new HtmlString(_tagBuilder.BuildLinkTag(file))
+            : HtmlString.Empty;
+    }
+
+    /// <summary>
+    /// Gets an HTML style tag for the specified asset.
+    /// </summary>
+    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>An HtmlString containing the HTML style tag.</returns>
+    public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
+    {
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return HtmlString.Empty;
+        }
+
+        bundle = TryFixCssBundleName(bundle);
+        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+
+        if (file == null)
+        {
+            if (string.IsNullOrEmpty(fallback))
+            {
+                return HtmlString.Empty;
+            }
+
+            fallback = TryFixCssBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
+        }
+
+        return file != null
+            ? new HtmlString(await _tagBuilder.BuildStyleTagAsync(file).ConfigureAwait(false))
+            : HtmlString.Empty;
+    }
+
+    private static string TryFixCssBundleName(string bundle)
+    {
+        return TryFixBundleName(bundle, "css");
+    }
+
+    private static string TryFixJsBundleName(string bundle)
+    {
+        return TryFixBundleName(bundle, "js");
+    }
+
+    private static string TryFixBundleName(string bundle, string extension)
+    {
+        return !Path.HasExtension(bundle)
+            ? $"{bundle}.{extension}"
+            : bundle;
+    }
+}

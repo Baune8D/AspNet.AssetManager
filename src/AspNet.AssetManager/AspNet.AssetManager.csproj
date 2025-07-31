@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <Authors>Morten Larsen</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Utilities for managing modern frontend build tools in ASP.NET projects</Description>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Baune8D/AspNet.AssetManager</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Baune8D/AspNet.AssetManager</PackageProjectUrl>
+    <PackageTags>ASP.NET, Webpack</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
