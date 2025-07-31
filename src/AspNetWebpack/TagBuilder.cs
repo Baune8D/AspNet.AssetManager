@@ -124,7 +124,7 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
         var queryIndex = filename.IndexOf('?', StringComparison.Ordinal);
         if (queryIndex != -1)
         {
-            filename = filename.Substring(0, queryIndex);
+            filename = filename[..queryIndex];
         }
 
         var fullPath = $"{_sharedSettings.AssetsDirectoryPath}{filename}";

@@ -11,7 +11,7 @@ namespace AspNetWebpack;
 public interface ISharedSettings
 {
     /// <summary>
-    /// Gets a value indicating whether development mode is active.
+    /// Gets a value indicating whether the development mode is active.
     /// </summary>
     bool DevelopmentMode { get; }
 

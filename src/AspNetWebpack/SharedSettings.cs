@@ -39,7 +39,7 @@ public class SharedSettings : ISharedSettings
     }
 
     /// <summary>
-    /// Gets a value indicating whether development mode is active.
+    /// Gets a value indicating whether the development mode is active.
     /// </summary>
     public bool DevelopmentMode { get; }
 

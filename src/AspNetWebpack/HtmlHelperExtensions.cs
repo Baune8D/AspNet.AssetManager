@@ -17,7 +17,7 @@ public static class HtmlHelperExtensions
     /// <summary>
     /// Gets the bundle name from the view context.
     /// </summary>
-    /// <param name="html">The html helper.</param>
+    /// <param name="html">The HTML helper.</param>
     /// <returns>The bundle name.</returns>
     public static string GetBundleName(this IHtmlHelper html)
     {
