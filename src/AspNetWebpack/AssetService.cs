@@ -104,7 +104,7 @@ public sealed class AssetService : IAssetService
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <param name="load">Enum for modifying script load behavior.</param>
     /// <returns>An HtmlString containing the html script tag.</returns>
-    public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallbackBundle, ScriptLoad load = ScriptLoad.Normal)
+    public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal)
     {
         if (string.IsNullOrEmpty(bundle))
         {
@@ -116,13 +116,13 @@ public sealed class AssetService : IAssetService
 
         if (file == null)
         {
-            if (string.IsNullOrEmpty(fallbackBundle))
+            if (string.IsNullOrEmpty(fallback))
             {
                 return HtmlString.Empty;
             }
 
-            fallbackBundle = TryFixJsBundleName(fallbackBundle);
-            file = await _manifestService.GetFromManifestAsync(fallbackBundle).ConfigureAwait(false);
+            fallback = TryFixJsBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
         }
 
         return file != null
@@ -136,7 +136,7 @@ public sealed class AssetService : IAssetService
     /// <param name="bundle">The name of the Webpack bundle.</param>
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <returns>An HtmlString containing the html link tag.</returns>
-    public async Task<HtmlString> GetLinkTagAsync(string bundle, string? fallbackBundle = null)
+    public async Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null)
     {
         if (string.IsNullOrEmpty(bundle))
         {
@@ -148,13 +148,13 @@ public sealed class AssetService : IAssetService
 
         if (file == null)
         {
-            if (string.IsNullOrEmpty(fallbackBundle))
+            if (string.IsNullOrEmpty(fallback))
             {
                 return HtmlString.Empty;
             }
 
-            fallbackBundle = TryFixCssBundleName(fallbackBundle);
-            file = await _manifestService.GetFromManifestAsync(fallbackBundle).ConfigureAwait(false);
+            fallback = TryFixCssBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
         }
 
         return file != null
@@ -168,7 +168,7 @@ public sealed class AssetService : IAssetService
     /// <param name="bundle">The name of the Webpack bundle.</param>
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <returns>An HtmlString containing the html style tag.</returns>
-    public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallbackBundle = null)
+    public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
     {
         if (string.IsNullOrEmpty(bundle))
         {
@@ -180,13 +180,13 @@ public sealed class AssetService : IAssetService
 
         if (file == null)
         {
-            if (string.IsNullOrEmpty(fallbackBundle))
+            if (string.IsNullOrEmpty(fallback))
             {
                 return HtmlString.Empty;
             }
 
-            fallbackBundle = TryFixCssBundleName(fallbackBundle);
-            file = await _manifestService.GetFromManifestAsync(fallbackBundle).ConfigureAwait(false);
+            fallback = TryFixCssBundleName(fallback);
+            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
         }
 
         return file != null

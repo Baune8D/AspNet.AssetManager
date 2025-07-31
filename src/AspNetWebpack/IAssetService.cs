@@ -46,7 +46,7 @@ public interface IAssetService
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <param name="load">Enum for modifying script load behavior.</param>
     /// <returns>An HtmlString containing the html script tag.</returns>
-    Task<HtmlString> GetScriptTagAsync(string bundle, string? fallbackBundle, ScriptLoad load = ScriptLoad.Normal);
+    Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal);
 
     /// <summary>
     /// Gets a html link tag for the specified asset.
@@ -54,7 +54,7 @@ public interface IAssetService
     /// <param name="bundle">The name of the Webpack bundle.</param>
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <returns>An HtmlString containing the html link tag.</returns>
-    Task<HtmlString> GetLinkTagAsync(string bundle, string? fallbackBundle = null);
+    Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null);
 
     /// <summary>
     /// Gets a html style tag for the specified asset.
@@ -62,5 +62,5 @@ public interface IAssetService
     /// <param name="bundle">The name of the Webpack bundle.</param>
     /// <param name="fallbackBundle">The name of the bundle to fallback to if main bundle does not exist.</param>
     /// <returns>An HtmlString containing the html style tag.</returns>
-    Task<HtmlString> GetStyleTagAsync(string bundle, string? fallbackBundle = null);
+    Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null);
 }
