@@ -1,7 +1,7 @@
 # AspNet.AssetManager
 [![Build status](https://ci.appveyor.com/api/projects/status/u369u4wt45hsw53f?svg=true)](https://ci.appveyor.com/project/Baune8D/aspnet-assetmanager)
 [![codecov](https://codecov.io/gh/Baune8D/AspNet.AssetManager/branch/main/graph/badge.svg?token=M4KiXgJBnw)](https://codecov.io/gh/Baune8D/AspNet.AssetManager)
-[![NuGet Badge](https://buildstats.info/nuget/AspNet.AssetManager)](https://www.nuget.org/packages/AspNet.AssetManager)
+![NuGet Version](https://img.shields.io/nuget/v/AspNet.AssetManager)
 
 See the template repository, for usage examples: [AspNet.Frontends](https://github.com/Baune8D/AspNet.Frontends)
 
@@ -21,7 +21,7 @@ var bundle = Html.GetBundleName() // Generates the bundle name from the view con
 Recommended use in eg. `_Layout.cshtml`:
 ```csharp
 var bundle = ViewData.GetBundleName() ?? Html.GetBundleName();
-// Generates the bundle name from the view context of not overridin in ViewData["Bundle"]
+// Generates the bundle name from the view context if not overridin in ViewData["Bundle"]
 ```
 
 Use `AssetService` to get assets:
@@ -38,20 +38,29 @@ Use `AssetService` to get assets:
 // Generates: <script src="/web/path/SomeBundle.js"></script>
 
 @await AssetService.GetLinkTagAsync("SomeBundle")
-// Generates: <link href="/web/path/SomeBundle.css" rel=\"stylesheet\" />
+// Generates: <link href="/web/path/SomeBundle.css" rel="stylesheet" />
 
 @await AssetService.GetStyleTagAsync("SomeBundle")
 // Generates: <style>Inlined CSS</style
 ```
-Overloads exist on `GetBundlePathAsync` in case no extension is applied for the bundle name.
 
-Overloads exist on `GetScriptTagAsync` to change the load behavior to e.g. `async` and/or `defer`.
+Overloads exist on `GetBundlePathAsync` in case no extension is applied for the bundle name:
+```csharp
+@await AssetService.GetBundlePathAsync("SomeBundle", FileType.JS)
+// Returns: /web/path/SomeBundle.js
+```
+
+Overloads exist on `GetScriptTagAsync` to change the load behavior to e.g. `async` and/or `defer`:
+```csharp
+@await AssetService.GetScriptTagAsync("SomeBundle", ScriptLoad.Async)
+// Generates: <script src="/web/path/SomeBundle.js" async></script>
+```
 
 A fallback bundle can be specified on: `GetScriptTagAsync`, `GetLinkTagAsync`, `GetStyleTagAsync`:
 ```csharp
 @await AssetService.GetScriptTagAsync("SomeBundle", fallback: "FallbackBundle")
 // Generates: <script src="/web/path/SomeBundle.js"></script>
-// Or if SomeBundle does not exist: <script src="/web/path/FallbackBundle.js"></script>
+// Or if 'SomeBundle' does not exist: <script src="/web/path/FallbackBundle.js"></script>
 ```
 
 ## Example _Layout.cshtml
