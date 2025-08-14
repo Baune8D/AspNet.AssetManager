@@ -58,7 +58,7 @@ public static class DependencyMocker
     /// </summary>
     /// <param name="httpStatusCode">The response status code.</param>
     /// <param name="content">The response content.</param>
-    /// <param name="json">If the response should be json.</param>
+    /// <param name="json">If the response should be JSON.</param>
     /// <returns>The HttpClientFactory object.</returns>
     public static Mock<IHttpClientFactory> GetHttpClientFactory(HttpStatusCode httpStatusCode, string content = "", bool json = false)
     {

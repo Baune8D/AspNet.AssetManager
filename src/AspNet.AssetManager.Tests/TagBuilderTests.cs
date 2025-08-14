@@ -227,11 +227,10 @@ public sealed class TagBuilderTests : IDisposable
         var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
         _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
-        var bundle = $"{Bundle}?v=123";
 
         // Act
-        var result = await _tagBuilder.BuildStyleTagAsync(bundle);
-        var result2 = await _tagBuilder.BuildStyleTagAsync(bundle);
+        var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
+        var result2 = await _tagBuilder.BuildStyleTagAsync(Bundle);
 
         // Assert
         VerifyStyleTag(result);

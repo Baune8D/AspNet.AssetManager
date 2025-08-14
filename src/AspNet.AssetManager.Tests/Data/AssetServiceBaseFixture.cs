@@ -58,7 +58,7 @@ public abstract class AssetServiceBaseFixture
     /// <summary>
     /// Gets the full test bundle filename including cache buster.
     /// </summary>
-    protected string ValidBundleResult => $"{ValidTestBundle}?v=1234";
+    protected string ValidBundleResult => ValidTestBundle;
 
     /// <summary>
     /// Gets the full path of <see cref="ValidBundleResult"/>.
@@ -68,12 +68,7 @@ public abstract class AssetServiceBaseFixture
     /// <summary>
     /// Gets the full fallback test bundle filename including cache buster.
     /// </summary>
-    protected string ValidFallbackBundleResult => $"{ValidFallbackTestBundle}?v=1234";
-
-    /// <summary>
-    /// Gets the full path of <see cref="ValidFallbackBundleResult"/>.
-    /// </summary>
-    protected string ValidFallbackBundleResultPath => $"{AssetService.WebPath}{ValidFallbackBundleResult}";
+    protected string ValidFallbackBundleResult => $"{ValidFallbackTestBundle}";
 
     private Mock<ISharedSettings> SharedSettingsMock { get; }
 
@@ -84,7 +79,7 @@ public abstract class AssetServiceBaseFixture
     private string? ValidFallbackTestBundle { get; }
 
     /// <summary>
-    /// Verify dependency functions triggered in constructor.
+    /// Verify dependency functions triggered in the constructor.
     /// </summary>
     protected void VerifyDependencies()
     {

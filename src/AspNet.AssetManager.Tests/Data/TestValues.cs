@@ -38,5 +38,5 @@ public static class TestValues
     /// <summary>
     /// Bundle result filename used in json result from HttpMessageHandlerStub.
     /// </summary>
-    public const string JsonResultBundle = "Bundle.min.js?v=123";
+    public const string JsonResultBundle = "Bundle.min.js";
 }
