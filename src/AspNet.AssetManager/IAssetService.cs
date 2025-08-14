@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Html;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Service for including Webpack assets in UI projects.
+/// Service for including frontend assets in UI projects.
 /// </summary>
 public interface IAssetService
 {
@@ -34,7 +34,7 @@ public interface IAssetService
     /// <summary>
     /// Gets an HTML script tag for the specified asset.
     /// </summary>
-    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="bundle">The name of the frontend bundle.</param>
     /// <param name="load">Enum for modifying script load behavior.</param>
     /// <returns>An HtmlString containing the HTML script tag.</returns>
     Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal);
@@ -42,7 +42,7 @@ public interface IAssetService
     /// <summary>
     /// Gets an HTML script tag for the specified asset.
     /// </summary>
-    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="bundle">The name of the frontend bundle.</param>
     /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
     /// <param name="load">Enum for modifying script load behavior.</param>
     /// <returns>An HtmlString containing the HTML script tag.</returns>
@@ -51,7 +51,7 @@ public interface IAssetService
     /// <summary>
     /// Gets an HTML link tag for the specified asset.
     /// </summary>
-    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="bundle">The name of the frontend bundle.</param>
     /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
     /// <returns>An HtmlString containing the HTML link tag.</returns>
     Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null);
@@ -59,7 +59,7 @@ public interface IAssetService
     /// <summary>
     /// Gets an HTML style tag for the specified asset.
     /// </summary>
-    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="bundle">The name of the frontend bundle.</param>
     /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
     /// <returns>An HtmlString containing the HTML style tag.</returns>
     Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null);

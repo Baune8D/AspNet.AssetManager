@@ -15,10 +15,10 @@ namespace AspNet.AssetManager;
 public static class ViewDataExtensions
 {
     /// <summary>
-    /// Check the ViewData for a Webpack bundle name.
+    /// Check the ViewData for a frontend bundle name.
     /// </summary>
     /// <param name="viewData">The view data.</param>
-    /// <returns>The name of the Webpack bundle.</returns>
+    /// <returns>The name of the frontend bundle.</returns>
     public static string? GetBundleName(this ViewDataDictionary viewData)
     {
         ArgumentNullException.ThrowIfNull(viewData);

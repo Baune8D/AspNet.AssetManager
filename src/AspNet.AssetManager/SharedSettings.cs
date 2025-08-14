@@ -18,9 +18,9 @@ public class SharedSettings : ISharedSettings
     /// <summary>
     /// Initializes a new instance of the <see cref="SharedSettings"/> class.
     /// </summary>
-    /// <param name="options">Webpack options.</param>
+    /// <param name="options">Asset manager options.</param>
     /// <param name="webHostEnvironment">Web host environment.</param>
-    public SharedSettings(IOptions<WebpackOptions> options, IWebHostEnvironment webHostEnvironment)
+    public SharedSettings(IOptions<AssetManagerOptions> options, IWebHostEnvironment webHostEnvironment)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(webHostEnvironment);

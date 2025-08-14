@@ -20,15 +20,15 @@ public class SharedSettingsTests
     private const string PublicPath = "/public";
     private const string ManifestFile = "manifest.json";
 
-    private readonly Mock<IOptions<WebpackOptions>> _optionsMock;
+    private readonly Mock<IOptions<AssetManagerOptions>> _optionsMock;
 
     public SharedSettingsTests()
     {
-        _optionsMock = new Mock<IOptions<WebpackOptions>>();
+        _optionsMock = new Mock<IOptions<AssetManagerOptions>>();
 
         _optionsMock
             .SetupGet(x => x.Value)
-            .Returns(new WebpackOptions
+            .Returns(new AssetManagerOptions
             {
                 PublicDevServer = PublicDevServer,
                 InternalDevServer = InternalDevServer,

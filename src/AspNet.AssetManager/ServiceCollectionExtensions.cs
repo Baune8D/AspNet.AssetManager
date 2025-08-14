@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
             serviceCollection.AddHttpClient();
         }
 
-        serviceCollection.Configure<WebpackOptions>(configuration.GetSection("Webpack"));
+        serviceCollection.Configure<AssetManagerOptions>(configuration.GetSection("AssetManager"));
         serviceCollection.TryAddTransient<IFileSystem, FileSystem>();
         serviceCollection.AddSingleton<ISharedSettings, SharedSettings>();
         serviceCollection.AddSingleton<ITagBuilder, TagBuilder>();

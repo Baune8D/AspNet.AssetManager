@@ -8,7 +8,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Baune8D/AspNet.AssetManager</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Baune8D/AspNet.AssetManager</PackageProjectUrl>
-    <PackageTags>ASP.NET, Webpack</PackageTags>
+    <PackageTags>ASP.NET, Webpack, Vite</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 

@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Service for including Webpack assets in UI projects.
+/// Service for including frontend assets in UI projects.
 /// </summary>
 public interface IManifestService
 {
     /// <summary>
-    /// Gets the asset filename from the Webpack manifest.
+    /// Gets the asset filename from the frontend manifest.
     /// </summary>
-    /// <param name="bundle">The name of the Webpack bundle.</param>
+    /// <param name="bundle">The name of the frontend bundle.</param>
     /// <returns>The asset filename.</returns>
     Task<string?> GetFromManifestAsync(string bundle);
 }

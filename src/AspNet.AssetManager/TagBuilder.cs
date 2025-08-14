@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Service for including Webpack assets in UI projects.
+/// Service for including frontend assets in UI projects.
 /// </summary>
 public sealed class TagBuilder : ITagBuilder, IDisposable
 {

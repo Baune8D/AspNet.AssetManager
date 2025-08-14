@@ -27,7 +27,7 @@ public class ServiceCollectionExtensionsTests
         var configuration = new Mock<IConfiguration>();
         var configurationSection = new Mock<IConfigurationSection>();
         configuration
-            .Setup(x => x.GetSection("Webpack"))
+            .Setup(x => x.GetSection("AssetManager"))
             .Returns(configurationSection.Object);
 
         _configuration = configuration.Object;
@@ -58,14 +58,14 @@ public class ServiceCollectionExtensionsTests
         _serviceCollection.AddAssetManager(_configuration, webHostEnvironment);
         var provider = _serviceCollection.BuildServiceProvider();
         var httpClientFactory = provider.GetService<IHttpClientFactory>();
-        var webpackOptions = provider.GetService<IOptions<WebpackOptions>>();
+        var assetManagerOptions = provider.GetService<IOptions<AssetManagerOptions>>();
         var manifestService = provider.GetService<IManifestService>();
         var tagBuilder = provider.GetService<ITagBuilder>();
         var assetService = provider.GetService<IAssetService>();
 
         // Assert
         httpClientFactory.Should().NotBeNull();
-        VerifyDefaultServices(webpackOptions, manifestService, tagBuilder, assetService);
+        VerifyDefaultServices(assetManagerOptions, manifestService, tagBuilder, assetService);
     }
 
     [Fact]
@@ -79,23 +79,23 @@ public class ServiceCollectionExtensionsTests
         _serviceCollection.AddAssetManager(_configuration, webHostEnvironment);
         var provider = _serviceCollection.BuildServiceProvider();
         var httpClientFactory = provider.GetService<IHttpClientFactory>();
-        var webpackOptions = provider.GetService<IOptions<WebpackOptions>>();
+        var assetManagerOptions = provider.GetService<IOptions<AssetManagerOptions>>();
         var manifestService = provider.GetService<IManifestService>();
         var tagBuilder = provider.GetService<ITagBuilder>();
         var assetService = provider.GetService<IAssetService>();
 
         // Assert
         httpClientFactory.Should().BeNull();
-        VerifyDefaultServices(webpackOptions, manifestService, tagBuilder, assetService);
+        VerifyDefaultServices(assetManagerOptions, manifestService, tagBuilder, assetService);
     }
 
     private static void VerifyDefaultServices(
-        IOptions<WebpackOptions>? webpackOptions,
+        IOptions<AssetManagerOptions>? assetManagerOptions,
         IManifestService? manifestService,
         ITagBuilder? tagBuilder,
         IAssetService? assetService)
     {
-        webpackOptions.Should().NotBeNull();
+        assetManagerOptions.Should().NotBeNull();
         manifestService.Should().NotBeNull();
         tagBuilder.Should().NotBeNull();
         assetService.Should().NotBeNull();

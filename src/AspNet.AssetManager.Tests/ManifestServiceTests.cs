@@ -57,7 +57,7 @@ public sealed class ManifestServiceTests : IDisposable
         // Assert
         await act.Should()
             .ThrowExactlyAsync<InvalidOperationException>()
-            .WithMessage("Webpack Dev Server not started!");
+            .WithMessage("Development server not started!");
         _fileSystemMock.VerifyNoOtherCalls();
     }
 
