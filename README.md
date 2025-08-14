@@ -63,7 +63,23 @@ A fallback bundle can be specified on: `GetScriptTagAsync`, `GetLinkTagAsync`, `
 // Or if 'SomeBundle' does not exist: <script src="/web/path/FallbackBundle.js"></script>
 ```
 
-## Example _Layout.cshtml
+## Configuration: `appsettings.json`
+```json
+{
+  "AssetManager": {
+    "PublicDevServer": "http://localhost:5173",
+    "InternalDevServer": "http://localhost:5173",
+    "PublicPath": "/dist/",
+    "ManifestFile": "assets-manifest.json",
+    "ManifestType": "KeyValue"
+  }
+}
+```
+
+* **`PublicDevServer` is the only required setting.**
+* `ManifestType` can be either `KeyValue` or `Vite`.
+
+## Example: `_Layout.cshtml`
 
 ```razor
 @using AspNet.AssetManager
