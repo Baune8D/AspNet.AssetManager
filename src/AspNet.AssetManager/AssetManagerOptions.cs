@@ -30,5 +30,5 @@ public class AssetManagerOptions
     /// <summary>
     /// Gets or sets the name of the manifest file.
     /// </summary>
-    public string ManifestFile { get; set; } = "manifest.json";
+    public string ManifestFile { get; set; } = "assets-manifest.json";
 }
