@@ -31,4 +31,9 @@ public class AssetManagerOptions
     /// Gets or sets the name of the manifest file.
     /// </summary>
     public string ManifestFile { get; set; } = "assets-manifest.json";
+
+    /// <summary>
+    /// Gets or sets the type of manifest.
+    /// </summary>
+    public ManifestType ManifestType { get; set; } = ManifestType.KeyValue;
 }

@@ -29,4 +29,9 @@ public interface ISharedSettings
     /// Gets the manifest file path.
     /// </summary>
     string ManifestPath { get; }
+
+    /// <summary>
+    /// Gets the type of manifest.
+    /// </summary>
+    public ManifestType ManifestType { get; }
 }

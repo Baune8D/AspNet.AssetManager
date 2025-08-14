@@ -83,6 +83,16 @@ public sealed class ManifestService : IManifestService, IDisposable
             manifest = _manifest;
         }
 
+        if (_sharedSettings.ManifestType == ManifestType.Vite)
+        {
+            return GetFromViteManifest(manifest, bundle);
+        }
+
+        return GetFromKeyValueManifest(manifest, bundle);
+    }
+
+    private static string? GetFromKeyValueManifest(JsonDocument manifest, string bundle)
+    {
         try
         {
             return manifest.RootElement.GetProperty(bundle).GetString();
@@ -91,6 +101,22 @@ public sealed class ManifestService : IManifestService, IDisposable
         {
             return null;
         }
+    }
+
+    private static string? GetFromViteManifest(JsonDocument manifest, string bundle)
+    {
+        foreach (var property in manifest.RootElement.EnumerateObject())
+        {
+            var entry = property.Value;
+            var name = entry.GetProperty("name").GetString();
+
+            if (name == bundle)
+            {
+                return entry.GetProperty("file").GetString();
+            }
+        }
+
+        return null;
     }
 
     private static async Task<string> FetchDevelopmentManifestAsync(HttpClient? httpClient, string manifestPath)

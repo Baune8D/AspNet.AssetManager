@@ -36,6 +36,7 @@ public class SharedSettings : ISharedSettings
             : options.Value.PublicPath;
 
         ManifestPath = AssetsDirectoryPath + options.Value.ManifestFile;
+        ManifestType = options.Value.ManifestType;
     }
 
     /// <summary>
@@ -57,4 +58,9 @@ public class SharedSettings : ISharedSettings
     /// Gets the manifest file path.
     /// </summary>
     public string ManifestPath { get; }
+
+    /// <summary>
+    /// Gets the type of manifest.
+    /// </summary>
+    public ManifestType ManifestType { get; }
 }

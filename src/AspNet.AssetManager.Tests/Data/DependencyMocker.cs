@@ -75,8 +75,9 @@ public static class DependencyMocker
     /// Mock ISharedSettings.
     /// </summary>
     /// <param name="environmentName">The environment name.</param>
+    /// <param name="manifestType">The manifest type.</param>
     /// <returns>The SharedSettings object.</returns>
-    public static Mock<ISharedSettings> GetSharedSettings(string environmentName)
+    public static Mock<ISharedSettings> GetSharedSettings(string environmentName, ManifestType manifestType = ManifestType.KeyValue)
     {
         var isDevelopment = environmentName == TestValues.Development;
 
@@ -101,6 +102,10 @@ public static class DependencyMocker
             .Returns(isDevelopment
                 ? "https://domain/manifest.json"
                 : "/Some/Path/To/Manifest.json");
+
+        sharedSettings
+            .SetupGet(x => x.ManifestType)
+            .Returns(manifestType);
 
         return sharedSettings;
     }
