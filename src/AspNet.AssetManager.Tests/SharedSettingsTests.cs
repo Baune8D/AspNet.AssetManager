@@ -20,28 +20,7 @@ public class SharedSettingsTests
     private const string PublicPath = "/public";
     private const string ManifestFile = "manifest.json";
 
-    private readonly Mock<IOptions<AssetManagerOptions>> _optionsMock;
-
-    public SharedSettingsTests()
-    {
-        _optionsMock = new Mock<IOptions<AssetManagerOptions>>();
-
-        _optionsMock
-            .SetupGet(x => x.Value)
-            .Returns(new AssetManagerOptions
-            {
-                PublicDevServer = PublicDevServer,
-                InternalDevServer = InternalDevServer,
-                PublicPath = PublicPath,
-                ManifestFile = ManifestFile,
-            });
-    }
-
-    private static string DevAssetsDirectoryPathResult => $"{InternalDevServer}{PublicPath}";
-
     private static string DevAssetsWebPathResult => $"{PublicDevServer}{PublicPath}";
-
-    private static string DevManifestPathResult => $"{DevAssetsDirectoryPathResult}{ManifestFile}";
 
     private static string ProdAssetsDirectoryPathResult => $"{TestValues.WebRootPath}{PublicPath}";
 
@@ -67,42 +46,49 @@ public class SharedSettingsTests
     public void Constructor_WebHostEnvironmentNull_ShouldThrowArgumentNullException()
     {
         // Act
-        Action act = () => _ = new SharedSettings(_optionsMock.Object, null!);
+        var optionsMock = MockOptions(InternalDevServer);
+        Action act = () => _ = new SharedSettings(optionsMock.Object, null!);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
-        _optionsMock.VerifyNoOtherCalls();
+        optionsMock.VerifyNoOtherCalls();
     }
 
-    [Fact]
-    public void Constructor_Development_ShouldSetAllVariables()
+    [Theory]
+    [InlineData(InternalDevServer)]
+    [InlineData("/Internal/Path")]
+    public void Constructor_Development_ShouldSetAllVariables(string internalDevServer)
     {
         // Arrange
+        var optionsMock = MockOptions(internalDevServer);
         var webHostEnvironmentMock = DependencyMocker.GetWebHostEnvironment(TestValues.Development);
 
         // Act
-        var sharedSettings = new SharedSettings(_optionsMock.Object, webHostEnvironmentMock.Object);
+        var sharedSettings = new SharedSettings(optionsMock.Object, webHostEnvironmentMock.Object);
 
         // Assert
         sharedSettings.DevelopmentMode.Should().BeTrue();
-        sharedSettings.AssetsDirectoryPath.Should().Be(DevAssetsDirectoryPathResult);
+        sharedSettings.AssetsDirectoryPath.Should().Be(DevAssetsDirectoryPathResult(internalDevServer));
         sharedSettings.AssetsWebPath.Should().Be(DevAssetsWebPathResult);
-        sharedSettings.ManifestPath.Should().Be(DevManifestPathResult);
+        sharedSettings.ManifestPath.Should().Be(DevManifestPathResult(internalDevServer));
         sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
-        _optionsMock.VerifyGet(x => x.Value, Times.Exactly(6));
-        _optionsMock.VerifyNoOtherCalls();
+        optionsMock.VerifyGet(x => x.Value, Times.Exactly(6));
+        optionsMock.VerifyNoOtherCalls();
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();
     }
 
-    [Fact]
-    public void Constructor_Production_ShouldSetAllVariables()
+    [Theory]
+    [InlineData(InternalDevServer)]
+    [InlineData("/Internal/Path")]
+    public void Constructor_Production_ShouldSetAllVariables(string internalDevServer)
     {
         // Arrange
+        var optionsMock = MockOptions(internalDevServer);
         var webHostEnvironmentMock = DependencyMocker.GetWebHostEnvironment(TestValues.Production);
 
         // Act
-        var sharedSettings = new SharedSettings(_optionsMock.Object, webHostEnvironmentMock.Object);
+        var sharedSettings = new SharedSettings(optionsMock.Object, webHostEnvironmentMock.Object);
 
         // Assert
         sharedSettings.DevelopmentMode.Should().BeFalse();
@@ -110,10 +96,31 @@ public class SharedSettingsTests
         sharedSettings.AssetsWebPath.Should().Be(ProdAssetsWebPathResult);
         sharedSettings.ManifestPath.Should().Be(ProdManifestPathResult);
         sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
-        _optionsMock.VerifyGet(x => x.Value, Times.Exactly(4));
-        _optionsMock.VerifyNoOtherCalls();
+        optionsMock.VerifyGet(x => x.Value, Times.Exactly(4));
+        optionsMock.VerifyNoOtherCalls();
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyGet(x => x.WebRootPath, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();
+    }
+
+    private static string DevAssetsDirectoryPathResult(string internalDevServer) => $"{internalDevServer}{PublicPath}";
+
+    private static string DevManifestPathResult(string internalDevServer) => $"{DevAssetsDirectoryPathResult(internalDevServer)}{ManifestFile}";
+
+    private static Mock<IOptions<AssetManagerOptions>> MockOptions(string internalDevServer)
+    {
+        var optionsMock = new Mock<IOptions<AssetManagerOptions>>();
+
+        optionsMock
+            .SetupGet(x => x.Value)
+            .Returns(new AssetManagerOptions
+            {
+                PublicDevServer = PublicDevServer,
+                InternalDevServer = internalDevServer,
+                PublicPath = PublicPath,
+                ManifestFile = ManifestFile,
+            });
+
+        return optionsMock;
     }
 }

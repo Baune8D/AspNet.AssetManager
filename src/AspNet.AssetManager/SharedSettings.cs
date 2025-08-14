@@ -28,7 +28,7 @@ public class SharedSettings : ISharedSettings
         DevelopmentMode = webHostEnvironment.IsDevelopment();
 
         AssetsDirectoryPath = DevelopmentMode
-            ? options.Value.InternalDevServer + options.Value.PublicPath
+            ? (options.Value.InternalDevServer ?? options.Value.PublicDevServer) + options.Value.PublicPath
             : webHostEnvironment.WebRootPath + options.Value.PublicPath;
 
         AssetsWebPath = DevelopmentMode
