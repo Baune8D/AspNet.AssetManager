@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -106,7 +107,7 @@ public sealed class ManifestService : IManifestService, IDisposable
         }
     }
 
-    private static string? GetFromViteManifest(JsonDocument manifest, string bundle)
+    private string? GetFromViteManifest(JsonDocument manifest, string bundle)
     {
         var nameToFind = Path.GetFileNameWithoutExtension(bundle);
 
@@ -120,22 +121,21 @@ public sealed class ManifestService : IManifestService, IDisposable
                 continue;
             }
 
-            if (bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase) && entry.TryGetProperty("css", out var css))
+            if (!bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var cssElement in css.EnumerateArray())
-                {
-                    var value = cssElement.GetString() ?? string.Empty;
-
-                    if (value.StartsWith(nameToFind, StringComparison.Ordinal))
-                    {
-                        return value;
-                    }
-                }
-
-                return null;
+                return _sharedSettings.DevelopmentMode
+                    ? entry.GetProperty("src").GetString()
+                    : entry.GetProperty("file").GetString();
             }
 
-            return entry.GetProperty("file").GetString();
+            if (entry.TryGetProperty("css", out var css))
+            {
+                return css.EnumerateArray()
+                    .Select(cssElement => cssElement.GetString() ?? string.Empty)
+                    .FirstOrDefault(value => value.StartsWith(nameToFind, StringComparison.Ordinal));
+            }
+
+            return null;
         }
 
         return null;

@@ -28,9 +28,19 @@ public sealed class ManifestServiceTests : IDisposable
                                                       "Assets/{{TestValues.JsonBundleJs}}": {
                                                         "file": "{{TestValues.JsonResultBundleJs}}",
                                                         "name": "{{TestValues.JsonBundleName}}",
+                                                        "src": "{{TestValues.JsonSrcBundleJs}}",
                                                         "css": [
                                                           "{{TestValues.JsonResultBundleCss}}"
                                                         ]
+                                                      }
+                                                    }
+                                                    """;
+
+    private const string HttpClientViteDevResponse = $$"""
+                                                    {
+                                                      "Assets/{{TestValues.JsonBundleJs}}": {
+                                                        "name": "{{TestValues.JsonBundleName}}",
+                                                        "src": "{{TestValues.JsonSrcBundleJs}}"
                                                       }
                                                     }
                                                     """;
@@ -107,9 +117,9 @@ public sealed class ManifestServiceTests : IDisposable
     [Theory]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
-    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
-    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
-    public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
+    [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleJs, TestValues.JsonSrcBundleJs)]
+    [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleCss, null)]
+    public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string? resultBundle)
     {
         // Arrange
         var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);

@@ -54,4 +54,9 @@ public static class TestValues
     /// Bundle result filename used in json result from HttpMessageHandlerStub.
     /// </summary>
     public const string JsonResultBundleCss = $"{JsonBundleName}.min.js";
+
+    /// <summary>
+    /// Bundle result filename used in json result from HttpMessageHandlerStub.
+    /// </summary>
+    public const string JsonSrcBundleJs = $"Assets/{JsonBundleName}.min.js";
 }
