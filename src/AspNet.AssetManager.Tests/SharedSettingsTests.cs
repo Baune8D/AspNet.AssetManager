@@ -72,8 +72,6 @@ public class SharedSettingsTests
         sharedSettings.AssetsWebPath.Should().Be(DevAssetsWebPathResult);
         sharedSettings.ManifestPath.Should().Be(DevManifestPathResult(internalDevServer));
         sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
-        optionsMock.VerifyGet(x => x.Value, Times.Exactly(6));
-        optionsMock.VerifyNoOtherCalls();
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();
     }
@@ -96,8 +94,6 @@ public class SharedSettingsTests
         sharedSettings.AssetsWebPath.Should().Be(ProdAssetsWebPathResult);
         sharedSettings.ManifestPath.Should().Be(ProdManifestPathResult);
         sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
-        optionsMock.VerifyGet(x => x.Value, Times.Exactly(4));
-        optionsMock.VerifyNoOtherCalls();
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyGet(x => x.WebRootPath, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();

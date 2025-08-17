@@ -27,16 +27,21 @@ public class SharedSettings : ISharedSettings
 
         DevelopmentMode = webHostEnvironment.IsDevelopment();
 
-        AssetsDirectoryPath = DevelopmentMode
-            ? (options.Value.InternalDevServer ?? options.Value.PublicDevServer) + options.Value.PublicPath
-            : webHostEnvironment.WebRootPath + options.Value.PublicPath;
+        ManifestType = options.Value.ManifestType;
 
-        AssetsWebPath = DevelopmentMode
-            ? options.Value.PublicDevServer + options.Value.PublicPath
+        var publicPath = DevelopmentMode && ManifestType == ManifestType.Vite
+            ? string.Empty
             : options.Value.PublicPath;
 
+        AssetsDirectoryPath = DevelopmentMode
+            ? (options.Value.InternalDevServer ?? options.Value.PublicDevServer) + publicPath
+            : webHostEnvironment.WebRootPath + publicPath;
+
+        AssetsWebPath = DevelopmentMode
+            ? options.Value.PublicDevServer + publicPath
+            : publicPath;
+
         ManifestPath = AssetsDirectoryPath + options.Value.ManifestFile;
-        ManifestType = options.Value.ManifestType;
     }
 
     /// <summary>
