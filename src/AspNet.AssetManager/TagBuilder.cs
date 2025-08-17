@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Abstractions;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -63,31 +64,38 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
     /// <returns>A string containing the script tag.</returns>
     public string BuildScriptTag(string file, ScriptLoad load)
     {
-        var crossOrigin = string.Empty;
+        var attributes = new List<string>();
+
         if (_sharedSettings.DevelopmentMode)
         {
-            crossOrigin = "crossorigin=\"anonymous\"";
+            if (_sharedSettings.ManifestType == ManifestType.Vite)
+            {
+                attributes.Add("type=\"module\"");
+            }
+
+            attributes.Add("crossorigin=\"anonymous\"");
         }
 
-        var loadType = _sharedSettings.DevelopmentMode ? " " : string.Empty;
         switch (load)
         {
             case ScriptLoad.Normal:
                 break;
             case ScriptLoad.Async:
-                loadType += "async";
+                attributes.Add("async");
                 break;
             case ScriptLoad.Defer:
-                loadType += "defer";
+                attributes.Add("defer");
                 break;
             case ScriptLoad.AsyncDefer:
-                loadType += "async defer";
+                attributes.Add("async defer");
                 break;
             default:
                 throw new InvalidEnumArgumentException(nameof(load), (int)load, typeof(ScriptLoad));
         }
 
-        return $"<script src=\"{_sharedSettings.AssetsWebPath}{file}\" {crossOrigin}{loadType}></script>";
+        var space = attributes.Count != 0 ? " " : string.Empty;
+
+        return $"<script src=\"{_sharedSettings.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
     }
 
     /// <summary>

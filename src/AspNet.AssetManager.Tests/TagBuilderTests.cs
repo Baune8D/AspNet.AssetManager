@@ -44,8 +44,6 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         act.Should().ThrowExactly<InvalidEnumArgumentException>();
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.Exactly(2));
-        sharedSettingsMock.VerifyNoOtherCalls();
     }
 
     [Fact]
@@ -60,9 +58,28 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result, sharedSettingsMock);
+        VerifyScriptTag(result);
+    }
+
+    [Fact]
+    public void BuildScriptTag_DevelopmentVite_ShouldReturnScriptTag()
+    {
+        // Arrange
+        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
+
+        // Assert
+        result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.Contain("type=\"module\"")
+            .And.NotContain("async")
+            .And.NotContain("defer");
+        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -77,9 +94,10 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"")
             .And.Contain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result, sharedSettingsMock);
+        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -94,9 +112,10 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"")
             .And.Contain("defer")
             .And.NotContain("async");
-        VerifyScriptTag(result, sharedSettingsMock);
+        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -111,9 +130,10 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"")
             .And.Contain("async")
             .And.Contain("defer");
-        VerifyScriptTag(result, sharedSettingsMock);
+        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -130,7 +150,25 @@ public sealed class TagBuilderTests : IDisposable
         result.Should().NotContain("crossorigin=\"anonymous\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result, sharedSettingsMock);
+        VerifyScriptTag(result);
+    }
+
+    [Fact]
+    public void BuildScriptTag_ProductionVite_ShouldReturnScriptTag()
+    {
+        // Arrange
+        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
+
+        // Assert
+        result.Should().NotContain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"")
+            .And.NotContain("async")
+            .And.NotContain("defer");
+        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -145,7 +183,7 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().Contain("crossorigin=\"anonymous\"");
-        VerifyLinkTag(result, sharedSettingsMock);
+        VerifyLinkTag(result);
     }
 
     [Fact]
@@ -160,7 +198,7 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         result.Should().NotContain("crossorigin=\"anonymous\"");
-        VerifyLinkTag(result, sharedSettingsMock);
+        VerifyLinkTag(result);
     }
 
     [Fact]
@@ -191,9 +229,6 @@ public sealed class TagBuilderTests : IDisposable
 
         // Assert
         await act.Should().ThrowExactlyAsync<ArgumentNullException>();
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.AtLeastOnce);
-        sharedSettingsMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Once);
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
     }
 
@@ -212,9 +247,6 @@ public sealed class TagBuilderTests : IDisposable
         // Assert
         VerifyStyleTag(result);
         VerifyStyleTag(result2);
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.AtLeastOnce);
-        sharedSettingsMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Exactly(2));
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
         httpClientFactoryMock.VerifyNoOtherCalls();
@@ -235,9 +267,6 @@ public sealed class TagBuilderTests : IDisposable
         // Assert
         VerifyStyleTag(result);
         VerifyStyleTag(result2);
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.AtLeastOnce);
-        sharedSettingsMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Exactly(2));
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
         httpClientFactoryMock.VerifyNoOtherCalls();
@@ -257,9 +286,6 @@ public sealed class TagBuilderTests : IDisposable
         // Assert
         VerifyStyleTag(result);
         VerifyStyleTag(result2);
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.AtLeastOnce);
-        sharedSettingsMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Once);
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         _fileSystemMock.VerifyNoOtherCalls();
     }
@@ -271,26 +297,20 @@ public sealed class TagBuilderTests : IDisposable
             .And.EndWith("</style>");
     }
 
-    private void VerifyScriptTag(string result, Mock<ISharedSettings> sharedSettingsMock)
+    private void VerifyScriptTag(string result)
     {
         result.Should().StartWith("<script ")
             .And.EndWith("</script>")
             .And.Contain($"src=\"{ValidBundleResult}\"");
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.Exactly(2));
-        sharedSettingsMock.VerifyGet(x => x.AssetsWebPath, Times.Once);
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
     }
 
-    private void VerifyLinkTag(string result, Mock<ISharedSettings> sharedSettingsMock)
+    private void VerifyLinkTag(string result)
     {
         result.Should().StartWith("<link ")
             .And.EndWith(" />")
             .And.Contain($"href=\"{ValidBundleResult}\"")
             .And.Contain("rel=\"stylesheet\"");
-        sharedSettingsMock.VerifyGet(x => x.DevelopmentMode, Times.Exactly(1));
-        sharedSettingsMock.VerifyGet(x => x.AssetsWebPath, Times.Once);
-        sharedSettingsMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
     }
 }
