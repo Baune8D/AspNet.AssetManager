@@ -16,9 +16,24 @@ namespace AspNet.AssetManager.Tests;
 
 public sealed class ManifestServiceTests : IDisposable
 {
-    private const string HttpClientKeyValueResponse = $"{{\"{TestValues.JsonBundle}\":\"{TestValues.JsonResultBundle}\"}}";
+    private const string HttpClientKeyValueResponse = $$"""
+                                                        {
+                                                          "{{TestValues.JsonBundleJs}}": "{{TestValues.JsonResultBundleJs}}",
+                                                          "{{TestValues.JsonBundleCss}}": "{{TestValues.JsonResultBundleCss}}"
+                                                        }
+                                                        """;
 
-    private const string HttpClientViteResponse = $"{{\"/Assets/{TestValues.JsonBundle}.js\":{{\"name\":\"{TestValues.JsonBundle}\",\"file\":\"{TestValues.JsonResultBundle}\"}}}}";
+    private const string HttpClientViteResponse = $$"""
+                                                    {
+                                                      "Assets/{{TestValues.JsonBundleJs}}": {
+                                                        "file": "{{TestValues.JsonResultBundleJs}}",
+                                                        "name": "{{TestValues.JsonBundleName}}",
+                                                        "css": [
+                                                          "{{TestValues.JsonResultBundleCss}}"
+                                                        ]
+                                                      }
+                                                    }
+                                                    """;
 
     private ManifestService? _manifestService;
 
@@ -90,9 +105,11 @@ public sealed class ManifestServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse)]
-    [InlineData(ManifestType.Vite, HttpClientViteResponse)]
-    public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse)
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
+    public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
     {
         // Arrange
         var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);
@@ -101,12 +118,12 @@ public sealed class ManifestServiceTests : IDisposable
         _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
-        var result = await _manifestService.GetFromManifestAsync(TestValues.JsonBundle);
-        var result2 = await _manifestService.GetFromManifestAsync(TestValues.JsonBundle);
+        var result = await _manifestService.GetFromManifestAsync(bundle);
+        var result2 = await _manifestService.GetFromManifestAsync(bundle);
 
         // Assert
-        result.Should().Be(TestValues.JsonResultBundle);
-        result2.Should().Be(TestValues.JsonResultBundle);
+        result.Should().Be(resultBundle);
+        result2.Should().Be(resultBundle);
         fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
         httpClientFactoryMock.VerifyNoOtherCalls();
@@ -136,9 +153,11 @@ public sealed class ManifestServiceTests : IDisposable
     }
 
     [Theory]
-    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse)]
-    [InlineData(ManifestType.Vite, HttpClientViteResponse)]
-    public async Task GetFromManifest_ProductionValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse)
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
+    public async Task GetFromManifest_ProductionValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
     {
         // Arrange
         var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production, manifestType);
@@ -147,12 +166,12 @@ public sealed class ManifestServiceTests : IDisposable
         _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
-        var result = await _manifestService.GetFromManifestAsync(TestValues.JsonBundle);
-        var result2 = await _manifestService.GetFromManifestAsync(TestValues.JsonBundle);
+        var result = await _manifestService.GetFromManifestAsync(bundle);
+        var result2 = await _manifestService.GetFromManifestAsync(bundle);
 
         // Assert
-        result.Should().Be(TestValues.JsonResultBundle);
-        result2.Should().Be(TestValues.JsonResultBundle);
+        result.Should().Be(resultBundle);
+        result2.Should().Be(resultBundle);
         fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), CancellationToken.None), Times.Once);
         fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.VerifyNoOtherCalls();

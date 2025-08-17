@@ -33,10 +33,25 @@ public static class TestValues
     /// <summary>
     /// Bundle filename used in json result from HttpMessageHandlerStub.
     /// </summary>
-    public const string JsonBundle = "Bundle.js";
+    public const string JsonBundleName = "Bundle";
+
+    /// <summary>
+    /// Bundle filename used in json result from HttpMessageHandlerStub.
+    /// </summary>
+    public const string JsonBundleJs = $"{JsonBundleName}.js";
+
+    /// <summary>
+    /// Bundle filename used in json result from HttpMessageHandlerStub.
+    /// </summary>
+    public const string JsonBundleCss = $"{JsonBundleName}.css";
 
     /// <summary>
     /// Bundle result filename used in json result from HttpMessageHandlerStub.
     /// </summary>
-    public const string JsonResultBundle = "Bundle.min.js";
+    public const string JsonResultBundleJs = $"{JsonBundleName}.min.js";
+
+    /// <summary>
+    /// Bundle result filename used in json result from HttpMessageHandlerStub.
+    /// </summary>
+    public const string JsonResultBundleCss = $"{JsonBundleName}.min.js";
 }

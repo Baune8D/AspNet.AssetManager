@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Abstractions;
 using System.Net.Http;
 using System.Text.Json;
@@ -64,6 +65,8 @@ public sealed class ManifestService : IManifestService, IDisposable
     /// <returns>The asset filename.</returns>
     public async Task<string?> GetFromManifestAsync(string bundle)
     {
+        ArgumentNullException.ThrowIfNull(bundle);
+
         JsonDocument manifest;
 
         if (_manifest == null)
@@ -105,15 +108,34 @@ public sealed class ManifestService : IManifestService, IDisposable
 
     private static string? GetFromViteManifest(JsonDocument manifest, string bundle)
     {
+        var nameToFind = Path.GetFileNameWithoutExtension(bundle);
+
         foreach (var property in manifest.RootElement.EnumerateObject())
         {
             var entry = property.Value;
             var name = entry.GetProperty("name").GetString();
 
-            if (name == bundle)
+            if (name != nameToFind)
             {
-                return entry.GetProperty("file").GetString();
+                continue;
             }
+
+            if (bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase) && entry.TryGetProperty("css", out var css))
+            {
+                foreach (var cssElement in css.EnumerateArray())
+                {
+                    var value = cssElement.GetString() ?? string.Empty;
+
+                    if (value.StartsWith(nameToFind, StringComparison.Ordinal))
+                    {
+                        return value;
+                    }
+                }
+
+                return null;
+            }
+
+            return entry.GetProperty("file").GetString();
         }
 
         return null;
