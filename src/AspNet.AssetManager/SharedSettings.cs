@@ -30,7 +30,7 @@ public class SharedSettings : ISharedSettings
         ManifestType = options.Value.ManifestType;
 
         var publicPath = DevelopmentMode && ManifestType == ManifestType.Vite
-            ? string.Empty
+            ? "/"
             : options.Value.PublicPath;
 
         AssetsDirectoryPath = DevelopmentMode
