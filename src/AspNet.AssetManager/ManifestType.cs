@@ -5,6 +5,9 @@
 
 namespace AspNet.AssetManager;
 
+/// <summary>
+/// Type of the frontend manifest.
+/// </summary>
 public enum ManifestType
 {
     /// <summary>
