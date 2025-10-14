@@ -32,6 +32,14 @@ public interface IAssetService
     Task<string?> GetBundlePathAsync(string bundle, FileType? fileType = null);
 
     /// <summary>
+    /// Returns the specified script asset.
+    /// </summary>
+    /// <param name="bundle">The name of the frontend bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>A string containing the script asset.</returns>
+    Task<string?> GetScriptSrc(string bundle, string? fallback = null);
+
+    /// <summary>
     /// Gets an HTML script tag for the specified asset.
     /// </summary>
     /// <param name="bundle">The name of the frontend bundle.</param>
@@ -47,6 +55,14 @@ public interface IAssetService
     /// <param name="load">Enum for modifying script load behavior.</param>
     /// <returns>An HtmlString containing the HTML script tag.</returns>
     Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal);
+
+    /// <summary>
+    /// Returns the specified link asset.
+    /// </summary>
+    /// <param name="bundle">The name of the frontend bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>A string containing the link asset.</returns>
+    Task<string?> GetLinkHref(string bundle, string? fallback = null);
 
     /// <summary>
     /// Gets an HTML link tag for the specified asset.

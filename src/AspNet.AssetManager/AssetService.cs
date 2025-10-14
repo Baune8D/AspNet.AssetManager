@@ -87,6 +87,24 @@ public sealed class AssetService : IAssetService
     }
 
     /// <summary>
+    /// Returns the specified script asset.
+    /// </summary>
+    /// <param name="bundle">The name of the frontend bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>A string containing the script asset.</returns>
+    public async Task<string?> GetScriptSrc(string bundle, string? fallback = null)
+    {
+        var file = await GetJsBundleName(bundle).ConfigureAwait(false);
+
+        if (file == null)
+        {
+            file = await GetJsBundleName(fallback).ConfigureAwait(false);
+        }
+
+        return file;
+    }
+
+    /// <summary>
     /// Gets an HTML script tag for the specified asset.
     /// </summary>
     /// <param name="bundle">The name of the frontend bundle.</param>
@@ -106,28 +124,29 @@ public sealed class AssetService : IAssetService
     /// <returns>An HtmlString containing the HTML script tag.</returns>
     public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal)
     {
-        if (string.IsNullOrEmpty(bundle))
-        {
-            return HtmlString.Empty;
-        }
-
-        bundle = TryFixJsBundleName(bundle);
-        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
-
-        if (file == null)
-        {
-            if (string.IsNullOrEmpty(fallback))
-            {
-                return HtmlString.Empty;
-            }
-
-            fallback = TryFixJsBundleName(fallback);
-            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
-        }
+        var file = await GetScriptSrc(bundle, fallback).ConfigureAwait(false);
 
         return file != null
             ? new HtmlString(_tagBuilder.BuildScriptTag(file, load))
             : HtmlString.Empty;
+    }
+
+    /// <summary>
+    /// Returns the specified link asset.
+    /// </summary>
+    /// <param name="bundle">The name of the frontend bundle.</param>
+    /// <param name="fallback">The name of the bundle to fall back to if the main bundle does not exist.</param>
+    /// <returns>A string containing the link asset.</returns>
+    public async Task<string?> GetLinkHref(string bundle, string? fallback = null)
+    {
+        var file = await GetCssBundleName(bundle).ConfigureAwait(false);
+
+        if (file == null)
+        {
+            file = await GetCssBundleName(fallback).ConfigureAwait(false);
+        }
+
+        return file;
     }
 
     /// <summary>
@@ -138,24 +157,7 @@ public sealed class AssetService : IAssetService
     /// <returns>An HtmlString containing the HTML link tag.</returns>
     public async Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null)
     {
-        if (string.IsNullOrEmpty(bundle))
-        {
-            return HtmlString.Empty;
-        }
-
-        bundle = TryFixCssBundleName(bundle);
-        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
-
-        if (file == null)
-        {
-            if (string.IsNullOrEmpty(fallback))
-            {
-                return HtmlString.Empty;
-            }
-
-            fallback = TryFixCssBundleName(fallback);
-            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
-        }
+        var file = await GetLinkHref(bundle, fallback).ConfigureAwait(false);
 
         return file != null
             ? new HtmlString(_tagBuilder.BuildLinkTag(file))
@@ -170,38 +172,33 @@ public sealed class AssetService : IAssetService
     /// <returns>An HtmlString containing the HTML style tag.</returns>
     public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
     {
-        if (string.IsNullOrEmpty(bundle))
-        {
-            return HtmlString.Empty;
-        }
-
-        bundle = TryFixCssBundleName(bundle);
-        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
-
-        if (file == null)
-        {
-            if (string.IsNullOrEmpty(fallback))
-            {
-                return HtmlString.Empty;
-            }
-
-            fallback = TryFixCssBundleName(fallback);
-            file = await _manifestService.GetFromManifestAsync(fallback).ConfigureAwait(false);
-        }
+        var file = await GetLinkHref(bundle, fallback).ConfigureAwait(false);
 
         return file != null
             ? new HtmlString(await _tagBuilder.BuildStyleTagAsync(file).ConfigureAwait(false))
             : HtmlString.Empty;
     }
 
-    private static string TryFixCssBundleName(string bundle)
+    private async Task<string?> GetJsBundleName(string? bundle)
     {
-        return TryFixBundleName(bundle, "css");
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return null;
+        }
+
+        bundle = TryFixBundleName(bundle, "js");
+        return await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
     }
 
-    private static string TryFixJsBundleName(string bundle)
+    private async Task<string?> GetCssBundleName(string? bundle)
     {
-        return TryFixBundleName(bundle, "js");
+        if (string.IsNullOrEmpty(bundle))
+        {
+            return null;
+        }
+
+        bundle = TryFixBundleName(bundle, "css");
+        return await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
     }
 
     private static string TryFixBundleName(string bundle, string extension)
