@@ -10,15 +10,15 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Extensions for getting the bundle name from view data.
+/// Provides extension methods for working with ViewData in ASP.NET Core.
 /// </summary>
 public static class ViewDataExtensions
 {
     /// <summary>
-    /// Check the ViewData for a frontend bundle name.
+    /// Retrieves the name of the frontend bundle from the specified ViewData.
     /// </summary>
-    /// <param name="viewData">The view data.</param>
-    /// <returns>The name of the frontend bundle.</returns>
+    /// <param name="viewData">The ViewDataDictionary instance containing view data entries.</param>
+    /// <returns> The name of the frontend bundle if found and valid; otherwise, null.</returns>
     public static string? GetBundleName(this ViewDataDictionary viewData)
     {
         ArgumentNullException.ThrowIfNull(viewData);

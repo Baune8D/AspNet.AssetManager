@@ -6,32 +6,32 @@
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// A collection of shared settings for other services.
+/// Defines configuration settings for the asset management system.
 /// </summary>
 public interface IAssetConfiguration
 {
     /// <summary>
-    /// Gets a value indicating whether the development mode is active.
+    /// Gets a value indicating whether the application is running in development mode.
     /// </summary>
     bool DevelopmentMode { get; }
 
     /// <summary>
-    /// Gets the full directory path for assets.
+    /// Gets the file system path to the directory where assets are stored.
     /// </summary>
     string AssetsDirectoryPath { get; }
 
     /// <summary>
-    /// Gets the web path for UI assets.
+    /// Gets the base web path where asset files are served.
     /// </summary>
     string AssetsWebPath { get; }
 
     /// <summary>
-    /// Gets the manifest file path.
+    /// Gets the path to the manifest file used for asset management.
     /// </summary>
     string ManifestPath { get; }
 
     /// <summary>
-    /// Gets the type of manifest.
+    /// Gets the type of manifest used for managing asset references.
     /// </summary>
     public ManifestType ManifestType { get; }
 }

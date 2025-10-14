@@ -8,14 +8,17 @@ using System.Threading.Tasks;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Service for including frontend assets in UI projects.
+/// Provides functionality to manage and access asset manifests.
 /// </summary>
 public interface IManifestService
 {
     /// <summary>
-    /// Gets the asset filename from the frontend manifest.
+    /// Retrieves the asset filename for a given frontend bundle from the manifest.
     /// </summary>
     /// <param name="bundle">The name of the frontend bundle.</param>
-    /// <returns>The asset filename.</returns>
+    /// <returns>
+    /// A task representing the asynchronous operation.
+    /// On completion, contains the asset filename or null if the bundle does not exist.
+    /// </returns>
     Task<string?> GetFromManifestAsync(string bundle);
 }

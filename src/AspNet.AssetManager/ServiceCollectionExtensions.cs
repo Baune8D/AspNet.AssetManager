@@ -14,18 +14,24 @@ using Microsoft.Extensions.Hosting;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Extensions methods for IServiceCollection.
+/// Provides extension methods for IServiceCollection to register services required for asset management.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds AssetService and necessary dependencies.
+    /// Adds the Asset Manager services to the specified service collection.
     /// </summary>
-    /// <param name="serviceCollection">The service collection.</param>
-    /// <param name="configuration">The configuration.</param>
-    /// <param name="webHostEnvironment">The hosting environment.</param>
+    /// <param name="serviceCollection">
+    /// The service collection to which the Asset Manager services will be added.
+    /// </param>
+    /// <param name="configuration">The application configuration containing Asset Manager settings.</param>
+    /// <param name="webHostEnvironment">The hosting environment of the current application.</param>
     /// <returns>The modified service collection.</returns>
-    public static IServiceCollection AddAssetManager(this IServiceCollection serviceCollection, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+    // ReSharper disable once UnusedMethodReturnValue.Global
+    public static IServiceCollection AddAssetManager(
+        this IServiceCollection serviceCollection,
+        IConfiguration configuration,
+        IWebHostEnvironment webHostEnvironment)
     {
         ArgumentNullException.ThrowIfNull(configuration);
 

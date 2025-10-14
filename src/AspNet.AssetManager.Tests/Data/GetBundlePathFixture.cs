@@ -9,26 +9,12 @@ using AwesomeAssertions;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-/// <summary>
-/// Fixture for testing GetBundlePathAsync function in AssetService.
-/// </summary>
-public class GetBundlePathFixture : AssetServiceBaseFixture
+internal sealed class GetBundlePathFixture : AssetServiceBaseFixture
 {
-    /// <summary>
-    /// Valid bundle name with extension.
-    /// </summary>
     public const string ValidBundleWithExtension = $"{ValidBundleWithoutExtension}.js";
 
-    /// <summary>
-    /// Invalid bundle name with extension.
-    /// </summary>
     public const string InvalidBundleWithExtension = $"{InvalidBundle}.js";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GetBundlePathFixture"/> class.
-    /// </summary>
-    /// <param name="bundle">The bundle name param to be used in GetBundlePathAsync.</param>
-    /// <param name="fileType">The file type param to be used in GetBundlePathAsync.</param>
     public GetBundlePathFixture(string bundle, FileType? fileType = null)
         : base(ValidBundleWithExtension)
     {
@@ -45,10 +31,6 @@ public class GetBundlePathFixture : AssetServiceBaseFixture
 
     private string BundleWithJsExtension => $"{Bundle}.js";
 
-    /// <summary>
-    /// Calls GetBundlePathAsync with provided parameters.
-    /// </summary>
-    /// <returns>The result of GetBundlePathAsync.</returns>
     public async Task<string?> GetBundlePathAsync()
     {
         return await AssetService
@@ -56,10 +38,6 @@ public class GetBundlePathFixture : AssetServiceBaseFixture
             .ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Verify that GetBundlePathAsync was called with an empty string.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyEmpty(string? result)
     {
         result.Should().BeNull();
@@ -67,10 +45,6 @@ public class GetBundlePathFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetBundlePathAsync was called with an invalid bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyNonExisting(string? result)
     {
         result.Should().BeNull();
@@ -79,10 +53,6 @@ public class GetBundlePathFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetBundlePathAsync was called with a valid bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyExisting(string? result)
     {
         result.Should().NotBeNull()

@@ -9,24 +9,10 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-/// <summary>
-/// Stub class for testing view path.
-/// </summary>
-public class ViewStub : IView
+internal sealed class ViewStub(string view) : IView
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ViewStub"/> class.
-    /// </summary>
-    /// <param name="view">A fixed view path.</param>
-    public ViewStub(string view)
-    {
-        Path = view;
-    }
+    public string Path { get; } = view;
 
-    /// <inheritdoc />
-    public string Path { get; }
-
-    /// <inheritdoc />
     public Task RenderAsync(ViewContext context)
     {
         throw new System.NotImplementedException();

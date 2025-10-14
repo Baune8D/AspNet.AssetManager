@@ -14,33 +14,13 @@ using System.Threading.Tasks;
 
 namespace AspNet.AssetManager;
 
-/// <summary>
-/// Service for including frontend assets in UI projects.
-/// </summary>
-public sealed class ManifestService : IManifestService, IDisposable
+internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
+    : IManifestService, IDisposable
 {
-    private readonly IAssetConfiguration _assetConfiguration;
-    private readonly IFileSystem _fileSystem;
+    private readonly IAssetConfiguration _assetConfiguration = assetConfiguration;
 
     private JsonDocument? _manifest;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ManifestService"/> class.
-    /// </summary>
-    /// <param name="assetConfiguration">Shared settings.</param>
-    /// <param name="fileSystem">File system.</param>
-    public ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
-    {
-        _assetConfiguration = assetConfiguration;
-        _fileSystem = fileSystem;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ManifestService"/> class.
-    /// </summary>
-    /// <param name="assetConfiguration">Shared settings.</param>
-    /// <param name="fileSystem">File system.</param>
-    /// <param name="httpClientFactory">HttpClient factory.</param>
     public ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
         : this(assetConfiguration, fileSystem)
     {
@@ -52,18 +32,12 @@ public sealed class ManifestService : IManifestService, IDisposable
 
     private HttpClient? HttpClient { get; }
 
-    /// <inheritdoc />
     public void Dispose()
     {
         _manifest?.Dispose();
         HttpClient?.Dispose();
     }
 
-    /// <summary>
-    /// Gets the asset filename from the frontend manifest.
-    /// </summary>
-    /// <param name="bundle">The name of the frontend bundle.</param>
-    /// <returns>The asset filename.</returns>
     public async Task<string?> GetFromManifestAsync(string bundle)
     {
         ArgumentNullException.ThrowIfNull(bundle);
@@ -74,7 +48,7 @@ public sealed class ManifestService : IManifestService, IDisposable
         {
             var json = _assetConfiguration.DevelopmentMode
                 ? await FetchDevelopmentManifestAsync(HttpClient, _assetConfiguration.ManifestPath).ConfigureAwait(false)
-                : await _fileSystem.File.ReadAllTextAsync(_assetConfiguration.ManifestPath).ConfigureAwait(false);
+                : await fileSystem.File.ReadAllTextAsync(_assetConfiguration.ManifestPath).ConfigureAwait(false);
 
             manifest = JsonDocument.Parse(json);
             if (!_assetConfiguration.DevelopmentMode)

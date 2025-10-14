@@ -6,17 +6,19 @@
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Type of the frontend manifest.
+/// Represents the type of asset manifests used to manage application resources.
 /// </summary>
 public enum ManifestType
 {
     /// <summary>
-    /// Manifests with a simple key value structure.
+    /// Key-value pair-based manifest used to map asset names to their corresponding resource paths.
     /// </summary>
     KeyValue,
 
     /// <summary>
-    /// Vite's built-in manifest.
+    /// Represents a Vite-based manifest for managing assets.
+    /// Vite manifests typically provide detailed metadata for each asset,
+    /// including file paths, names, dependencies, and associated CSS files.
     /// </summary>
     Vite,
 }

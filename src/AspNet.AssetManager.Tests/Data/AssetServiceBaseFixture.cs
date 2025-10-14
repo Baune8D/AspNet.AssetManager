@@ -8,31 +8,14 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-/// <summary>
-/// Base fixture for testing AssetService.
-/// </summary>
-public abstract class AssetServiceBaseFixture
+internal abstract class AssetServiceBaseFixture
 {
-    /// <summary>
-    /// Valid bundle name without extension.
-    /// </summary>
     public const string ValidBundleWithoutExtension = "Bundle";
 
-    /// <summary>
-    /// Valid fallback bundle name without extension.
-    /// </summary>
     public const string ValidFallbackBundleWithoutExtension = "FallbackBundle";
 
-    /// <summary>
-    /// Invalid bundle name.
-    /// </summary>
     public const string InvalidBundle = "InvalidBundle";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AssetServiceBaseFixture"/> class.
-    /// </summary>
-    /// <param name="validTestBundle">A version of ValidBundleWithoutExtension with an extension appended.</param>
-    /// <param name="validFallbackTestBundle">A version of ValidFallbackBundleWithoutExtension with an extension appended.</param>
     protected AssetServiceBaseFixture(string validTestBundle, string? validFallbackTestBundle = null)
     {
         ValidTestBundle = validTestBundle;
@@ -45,29 +28,14 @@ public abstract class AssetServiceBaseFixture
         AssetService = new AssetService(AssetConfigurationMock.Object, ManifestServiceMock.Object, TagBuilderMock.Object);
     }
 
-    /// <summary>
-    /// Gets the true AssetService object.
-    /// </summary>
     protected IAssetService AssetService { get; }
 
-    /// <summary>
-    /// Gets the ITagBuilder mock.
-    /// </summary>
     protected Mock<ITagBuilder> TagBuilderMock { get; }
 
-    /// <summary>
-    /// Gets the full test bundle filename including cache buster.
-    /// </summary>
     protected string ValidBundleResult => ValidTestBundle;
 
-    /// <summary>
-    /// Gets the full path of <see cref="ValidBundleResult"/>.
-    /// </summary>
     protected string ValidBundleResultPath => $"{AssetService.WebPath}{ValidBundleResult}";
 
-    /// <summary>
-    /// Gets the full fallback test bundle filename including cache buster.
-    /// </summary>
     protected string ValidFallbackBundleResult => $"{ValidFallbackTestBundle}";
 
     private Mock<IAssetConfiguration> AssetConfigurationMock { get; }
@@ -78,30 +46,16 @@ public abstract class AssetServiceBaseFixture
 
     private string? ValidFallbackTestBundle { get; }
 
-    /// <summary>
-    /// Verify dependency functions triggered in the constructor.
-    /// </summary>
     protected void VerifyDependencies()
     {
         AssetConfigurationMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Once);
     }
 
-    /// <summary>
-    /// Verify GetFromManifestAsync.
-    /// </summary>
-    /// <param name="bundle">The bundle to verify against.</param>
-    /// <param name="times">Number of times to verify GetFromManifestAsync.</param>
     protected void VerifyGetFromManifest(string bundle, Times? times = null)
     {
         ManifestServiceMock.Verify(x => x.GetFromManifestAsync(bundle), times ?? Times.Once());
     }
 
-    /// <summary>
-    /// Verify GetFromManifestAsync.
-    /// </summary>
-    /// <param name="bundle">The bundle to verify against.</param>
-    /// <param name="fallbackBundle">The fallback bundle to verify against.</param>
-    /// <param name="extension">The extension to use.</param>
     protected void VerifyGetFromManifest(string bundle, string? fallbackBundle, string extension)
     {
         ArgumentNullException.ThrowIfNull(bundle);
@@ -131,17 +85,11 @@ public abstract class AssetServiceBaseFixture
         }
     }
 
-    /// <summary>
-    /// Verify no other calls.
-    /// </summary>
     protected void VerifyNoOtherCalls()
     {
         ManifestServiceMock.VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Setup GetFromManifestAsync.
-    /// </summary>
     protected void SetupGetFromManifest()
     {
         ManifestServiceMock

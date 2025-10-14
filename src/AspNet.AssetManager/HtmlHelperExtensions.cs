@@ -10,15 +10,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Helper class for getting the bundle name from the view context.
+/// Contains extension methods for the <see cref="IHtmlHelper"/> interface to facilitate
+/// working with view-related HTML utilities in ASP.NET Core applications.
 /// </summary>
 public static class HtmlHelperExtensions
 {
     /// <summary>
-    /// Gets the bundle name from the view context.
+    /// Retrieves the bundle name for the current view based on its path.
     /// </summary>
-    /// <param name="html">The HTML helper.</param>
-    /// <returns>The bundle name.</returns>
+    /// <param name="html">The HTML helper used to access the view context information.</param>
+    /// <returns>A string representing the bundle name derived from the view path.</returns>
     public static string GetBundleName(this IHtmlHelper html)
     {
         ArgumentNullException.ThrowIfNull(html);

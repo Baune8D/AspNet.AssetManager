@@ -10,29 +10,15 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-/// <summary>
-/// Fixture for testing GetStyleTagAsync function in AssetService.
-/// </summary>
-public class GetStyleTagFixture : AssetServiceBaseFixture
+internal sealed class GetStyleTagFixture : AssetServiceBaseFixture
 {
-    /// <summary>
-    /// Valid bundle name with extension.
-    /// </summary>
     public const string ValidBundleWithExtension = $"{ValidBundleWithoutExtension}.css";
 
-    /// <summary>
-    /// Valid fallback bundle name with extension.
-    /// </summary>
     public const string ValidFallbackBundleWithExtension = $"{ValidFallbackBundleWithoutExtension}.css";
 
     private const string StyleTag = "<style>Some Content</script>";
     private const string FallbackStyleTag = "<style>Some Fallback Content</style>";
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GetStyleTagFixture"/> class.
-    /// </summary>
-    /// <param name="bundle">The bundle name param to be used in GetStyleTagAsync.</param>
-    /// <param name="fallbackBundle">The fallback bundle name param to be used in GetStyleTagAsync.</param>
     public GetStyleTagFixture(string bundle, string? fallbackBundle = null)
         : base(ValidBundleWithExtension, ValidFallbackBundleWithExtension)
     {
@@ -47,10 +33,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
 
     private string? FallbackBundle { get; }
 
-    /// <summary>
-    /// Calls GetStyleTagAsync with provided parameters.
-    /// </summary>
-    /// <returns>The result of the called function.</returns>
     public async Task<HtmlString> GetStyleTagAsync()
     {
         return await AssetService
@@ -58,10 +40,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
             .ConfigureAwait(false);
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with an empty string.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyEmpty(HtmlString result)
     {
         result.Should().Be(HtmlString.Empty);
@@ -69,10 +47,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with an invalid bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyNonExisting(HtmlString result)
     {
         result.Should().Be(HtmlString.Empty);
@@ -81,10 +55,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with a valid bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyExisting(HtmlString result)
     {
         result.Should().BeEquivalentTo(new HtmlString(StyleTag));
@@ -94,10 +64,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with an empty string as fallback.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyFallbackEmpty(HtmlString result)
     {
         result.Should().Be(HtmlString.Empty);
@@ -106,10 +72,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with an invalid bundle and an invalid fallback bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyFallbackNonExisting(HtmlString result)
     {
         result.Should().Be(HtmlString.Empty);
@@ -118,10 +80,6 @@ public class GetStyleTagFixture : AssetServiceBaseFixture
         VerifyNoOtherCalls();
     }
 
-    /// <summary>
-    /// Verify that GetStyleTagAsync was called with an invalid bundle and a valid fallback bundle.
-    /// </summary>
-    /// <param name="result">The result to assert.</param>
     public void VerifyFallbackExisting(HtmlString result)
     {
         result.Should().BeEquivalentTo(new HtmlString(FallbackStyleTag));

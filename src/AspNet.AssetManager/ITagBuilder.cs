@@ -8,29 +8,35 @@ using System.Threading.Tasks;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Service for including frontend assets in UI projects.
+/// Provides functionality to build HTML tags for including assets
+/// such as scripts and styles in a web application.
 /// </summary>
 public interface ITagBuilder
 {
     /// <summary>
-    /// Builds the script tag.
+    /// Builds an HTML script tag for including a JavaScript file in a web application.
     /// </summary>
-    /// <param name="file">The JS file to use in the tag.</param>
-    /// <param name="load">Enum for modifying script load behavior.</param>
-    /// <returns>A string containing the script tag.</returns>
+    /// <param name="file">The path to the JavaScript file.</param>
+    /// <param name="load">
+    /// The script loading behavior, specifying how the script should be loaded (e.g., normal, async, defer).
+    /// </param>
+    /// <returns>A string containing the HTML script tag with the specified configuration.</returns>
     string BuildScriptTag(string file, ScriptLoad load);
 
     /// <summary>
-    /// Builds the link/style tag.
+    /// Builds an HTML link tag for including a CSS stylesheet in a web application.
     /// </summary>
-    /// <param name="file">The CSS file to use in the tag.</param>
-    /// <returns>A string containing the link/style tag.</returns>
+    /// <param name="file">The path to the CSS stylesheet file.</param>
+    /// <returns>A string containing the HTML link tag with the specified configuration.</returns>
     string BuildLinkTag(string file);
 
     /// <summary>
-    /// Builds the link/style tag.
+    /// Builds an HTML style tag for including a CSS file in a web application.
     /// </summary>
-    /// <param name="file">The CSS file to use in the tag.</param>
-    /// <returns>A string containing the link/style tag.</returns>
+    /// <param name="file">The path to the CSS file.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation,
+    /// containing a string with the HTML style tag wrapping the content of the specified CSS file.
+    /// </returns>
     Task<string> BuildStyleTagAsync(string file);
 }

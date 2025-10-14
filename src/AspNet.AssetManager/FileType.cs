@@ -6,7 +6,7 @@
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Defines the type of asset.
+/// Represents the types of files that can be used in the asset manager.
 /// </summary>
 public enum FileType
 {

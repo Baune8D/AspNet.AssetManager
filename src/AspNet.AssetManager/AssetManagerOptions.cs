@@ -3,37 +3,40 @@
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
 
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Asset manager options configured in appsettings.
+/// Represents configurable options for the Asset Manager.
 /// </summary>
 public class AssetManagerOptions
 {
     /// <summary>
-    /// Gets or sets the public url for the dev server. This needs to be accessible from the client.
+    /// Gets the publicly accessible URL of the development server.
+    /// Typically used to serve frontend assets during development.
     /// </summary>
-    public string? PublicDevServer { get; set; }
+    public string? PublicDevServer { get; init; }
 
     /// <summary>
-    /// Gets or sets the internal url for the dev server. This needs to be accessible from the server.
+    /// Gets the internal URL of the development server.
+    /// This is used for server-side operations during development and may not be publicly accessible.
     /// </summary>
-    public string? InternalDevServer { get; set; }
+    public string? InternalDevServer { get; init; }
 
     /// <summary>
-    /// Gets or sets the public path.
+    /// Gets the public base path where assets are served from.
+    /// This path is used to resolve asset URLs both during development and production.
     /// </summary>
-    public string PublicPath { get; set; } = "/dist/";
+    public string PublicPath { get; init; } = "/dist/";
 
     /// <summary>
-    /// Gets or sets the name of the manifest file.
+    /// Gets the name of the file containing the frontend asset manifest.
+    /// This is used to map asset identifiers to their respective file paths.
     /// </summary>
-    public string ManifestFile { get; set; } = "assets-manifest.json";
+    public string ManifestFile { get; init; } = "assets-manifest.json";
 
     /// <summary>
-    /// Gets or sets the type of manifest.
+    /// Gets the type of the frontend manifest.
+    /// Specifies the structure or format expected in the manifest file (e.g., KeyValue or Vite).
     /// </summary>
-    public ManifestType ManifestType { get; set; } = ManifestType.KeyValue;
+    public ManifestType ManifestType { get; init; } = ManifestType.KeyValue;
 }

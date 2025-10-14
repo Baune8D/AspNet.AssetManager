@@ -7,38 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AspNet.AssetManager;
 
-/// <summary>
-/// Service for including frontend assets in UI projects.
-/// </summary>
-public sealed class TagBuilder : ITagBuilder, IDisposable
+internal sealed class TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
+    : ITagBuilder, IDisposable
 {
     private readonly Dictionary<string, string> _inlineStyles = new();
-    private readonly IAssetConfiguration _assetConfiguration;
-    private readonly IFileSystem _fileSystem;
+    private readonly IAssetConfiguration _assetConfiguration = assetConfiguration;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TagBuilder"/> class.
-    /// </summary>
-    /// <param name="assetConfiguration">Shared settings.</param>
-    /// <param name="fileSystem">File system.</param>
-    public TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
-    {
-        _assetConfiguration = assetConfiguration;
-        _fileSystem = fileSystem;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TagBuilder"/> class.
-    /// </summary>
-    /// <param name="assetConfiguration">Shared settings.</param>
-    /// <param name="fileSystem">File system.</param>
-    /// <param name="httpClientFactory">HttpClient factory.</param>
     public TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
         : this(assetConfiguration, fileSystem)
     {
@@ -50,18 +29,11 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
 
     private HttpClient? HttpClient { get; }
 
-    /// <inheritdoc />
     public void Dispose()
     {
         HttpClient?.Dispose();
     }
 
-    /// <summary>
-    /// Builds the script tag.
-    /// </summary>
-    /// <param name="file">The JS file to use in the tag.</param>
-    /// <param name="load">Enum for modifying script load behavior.</param>
-    /// <returns>A string containing the script tag.</returns>
     public string BuildScriptTag(string file, ScriptLoad load)
     {
         var attributes = new List<string>();
@@ -98,11 +70,6 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
         return $"<script src=\"{_assetConfiguration.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
     }
 
-    /// <summary>
-    /// Builds the link/style tag.
-    /// </summary>
-    /// <param name="file">The CSS file to use in the tag.</param>
-    /// <returns>A string containing the link/style tag.</returns>
     public string BuildLinkTag(string file)
     {
         var crossOrigin = string.Empty;
@@ -114,11 +81,6 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
         return $"<link href=\"{_assetConfiguration.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
     }
 
-    /// <summary>
-    /// Builds the link/style tag.
-    /// </summary>
-    /// <param name="file">The CSS file to use in the tag.</param>
-    /// <returns>A string containing the link/style tag.</returns>
     public async Task<string> BuildStyleTagAsync(string file)
     {
         ArgumentNullException.ThrowIfNull(file);
@@ -139,7 +101,7 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
 
         var style = _assetConfiguration.DevelopmentMode
             ? await FetchDevelopmentStyleAsync(HttpClient, fullPath).ConfigureAwait(false)
-            : await _fileSystem.File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
+            : await fileSystem.File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
 
         var result = $"<style>{style}</style>";
 

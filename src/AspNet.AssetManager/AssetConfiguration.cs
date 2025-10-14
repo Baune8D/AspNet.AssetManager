@@ -10,16 +10,8 @@ using Microsoft.Extensions.Options;
 
 namespace AspNet.AssetManager;
 
-/// <summary>
-/// A collection of shared settings for other services.
-/// </summary>
-public class AssetConfiguration : IAssetConfiguration
+internal class AssetConfiguration : IAssetConfiguration
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="AssetConfiguration"/> class.
-    /// </summary>
-    /// <param name="options">Asset manager options.</param>
-    /// <param name="webHostEnvironment">Web host environment.</param>
     public AssetConfiguration(IOptions<AssetManagerOptions> options, IWebHostEnvironment webHostEnvironment)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -44,28 +36,13 @@ public class AssetConfiguration : IAssetConfiguration
         ManifestPath = AssetsDirectoryPath + options.Value.ManifestFile;
     }
 
-    /// <summary>
-    /// Gets a value indicating whether the development mode is active.
-    /// </summary>
     public bool DevelopmentMode { get; }
 
-    /// <summary>
-    /// Gets the full directory path for assets.
-    /// </summary>
     public string AssetsDirectoryPath { get; }
 
-    /// <summary>
-    /// Gets the web path for UI assets.
-    /// </summary>
     public string AssetsWebPath { get; }
 
-    /// <summary>
-    /// Gets the manifest file path.
-    /// </summary>
     public string ManifestPath { get; }
 
-    /// <summary>
-    /// Gets the type of manifest.
-    /// </summary>
     public ManifestType ManifestType { get; }
 }

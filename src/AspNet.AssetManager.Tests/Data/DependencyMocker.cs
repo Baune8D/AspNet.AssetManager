@@ -12,16 +12,8 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-/// <summary>
-/// Static functions for mocking common dependencies.
-/// </summary>
-public static class DependencyMocker
+internal static class DependencyMocker
 {
-    /// <summary>
-    /// Mock IWebHostEnvironment.
-    /// </summary>
-    /// <param name="environmentName">The environment name.</param>
-    /// <returns>The WebHostEnvironment object.</returns>
     public static Mock<IWebHostEnvironment> GetWebHostEnvironment(string environmentName)
     {
         var webHostEnvironmentMock = new Mock<IWebHostEnvironment>();
@@ -37,11 +29,6 @@ public static class DependencyMocker
         return webHostEnvironmentMock;
     }
 
-    /// <summary>
-    /// Mock IFileSystem.
-    /// </summary>
-    /// <param name="fileContent">The response content of ReadAllText.</param>
-    /// <returns>The FileSystem object.</returns>
     public static Mock<IFileSystem> GetFileSystem(string fileContent)
     {
         var fileSystemMock = new Mock<IFileSystem>();
@@ -53,13 +40,6 @@ public static class DependencyMocker
         return fileSystemMock;
     }
 
-    /// <summary>
-    /// Mock IHttpClientFactory.
-    /// </summary>
-    /// <param name="httpStatusCode">The response status code.</param>
-    /// <param name="content">The response content.</param>
-    /// <param name="json">If the response should be JSON.</param>
-    /// <returns>The HttpClientFactory object.</returns>
     public static Mock<IHttpClientFactory> GetHttpClientFactory(HttpStatusCode httpStatusCode, string content = "", bool json = false)
     {
         var httpClientFactory = new Mock<IHttpClientFactory>();
@@ -71,12 +51,6 @@ public static class DependencyMocker
         return httpClientFactory;
     }
 
-    /// <summary>
-    /// Mock IAssetConfiguration.
-    /// </summary>
-    /// <param name="environmentName">The environment name.</param>
-    /// <param name="manifestType">The manifest type.</param>
-    /// <returns>The SharedSettings object.</returns>
     public static Mock<IAssetConfiguration> GetAssetConfiguration(string environmentName, ManifestType manifestType = ManifestType.KeyValue)
     {
         var isDevelopment = environmentName == TestValues.Development;

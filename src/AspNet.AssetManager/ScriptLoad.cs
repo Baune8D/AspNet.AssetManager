@@ -6,27 +6,32 @@
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// Defines how to load the script.
+/// Specifies the loading behavior for script tags.
 /// </summary>
 public enum ScriptLoad
 {
     /// <summary>
-    /// The normal way.
+    /// Specifies default script loading behavior with no additional attributes.
     /// </summary>
     Normal,
 
     /// <summary>
-    /// With async on the script tag.
+    /// Specifies that the script should be loaded asynchronously, allowing
+    /// it to execute as soon as it is available, without blocking other
+    /// elements on the page.
     /// </summary>
     Async,
 
     /// <summary>
-    /// With defer on the script tag.
+    /// Specifies that the script should be loaded in a deferred manner, meaning it will
+    /// be executed only after the HTML document has been parsed.
     /// </summary>
     Defer,
 
     /// <summary>
-    /// With both async and defer on the script tag.
+    /// Specifies that the script should be loaded with both "async" and "defer" attributes.
+    /// This loading mode enables asynchronous downloading while ensuring the execution order
+    /// of scripts matches the document order.
     /// </summary>
     AsyncDefer,
 }
