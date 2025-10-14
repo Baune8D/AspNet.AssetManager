@@ -18,7 +18,7 @@ namespace AspNet.AssetManager;
 public class LinkBundleTagHelper(
     IHtmlHelper htmlHelper,
     IAssetService assetService,
-    ISharedSettings sharedSettings)
+    IAssetConfiguration assetConfiguration)
     : TagHelper
 {
     /// <summary>
@@ -55,11 +55,11 @@ public class LinkBundleTagHelper(
         var bundle = ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
         var file = await assetService.GetLinkHref(bundle, Fallback).ConfigureAwait(false);
 
-        output.Attributes.SetAttribute("href", $"{sharedSettings.AssetsWebPath}{file}");
+        output.Attributes.SetAttribute("href", $"{assetConfiguration.AssetsWebPath}{file}");
 
         output.Attributes.SetAttribute("rel", "stylesheet");
 
-        if (sharedSettings.DevelopmentMode)
+        if (assetConfiguration.DevelopmentMode)
         {
             output.Attributes.SetAttribute("crossorigin", "anonymous");
         }

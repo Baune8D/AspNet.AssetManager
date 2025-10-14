@@ -1,4 +1,4 @@
-// <copyright file="ISharedSettings.cs" company="Morten Larsen">
+// <copyright file="IAssetConfiguration.cs" company="Morten Larsen">
 // Copyright (c) Morten Larsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
@@ -8,7 +8,7 @@ namespace AspNet.AssetManager;
 /// <summary>
 /// A collection of shared settings for other services.
 /// </summary>
-public interface ISharedSettings
+public interface IAssetConfiguration
 {
     /// <summary>
     /// Gets a value indicating whether the development mode is active.

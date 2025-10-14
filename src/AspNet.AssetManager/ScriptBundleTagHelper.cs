@@ -19,7 +19,7 @@ namespace AspNet.AssetManager;
 public class ScriptBundleTagHelper(
     IHtmlHelper htmlHelper,
     IAssetService assetService,
-    ISharedSettings sharedSettings)
+    IAssetConfiguration assetConfiguration)
     : TagHelper
 {
     /// <summary>
@@ -71,11 +71,11 @@ public class ScriptBundleTagHelper(
         var bundle = ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
         var file = await assetService.GetScriptSrc(bundle, Fallback).ConfigureAwait(false);
 
-        output.Attributes.SetAttribute("src", $"{sharedSettings.AssetsWebPath}{file}");
+        output.Attributes.SetAttribute("src", $"{assetConfiguration.AssetsWebPath}{file}");
 
-        if (sharedSettings.DevelopmentMode)
+        if (assetConfiguration.DevelopmentMode)
         {
-            if (sharedSettings.ManifestType == ManifestType.Vite)
+            if (assetConfiguration.ManifestType == ManifestType.Vite)
             {
                 output.Attributes.SetAttribute("type", "module");
             }

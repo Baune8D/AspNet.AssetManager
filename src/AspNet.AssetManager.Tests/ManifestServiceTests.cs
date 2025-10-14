@@ -58,9 +58,9 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_DevelopmentNoHttpClient_ShouldThrowArgumentNullException(ManifestType manifestType, string httpClientResponse)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, manifestType);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
 
         // Act
         Func<Task> act = () => _manifestService.GetFromManifestAsync("InvalidBundle");
@@ -76,10 +76,10 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_DevelopmentRequestFail_ShouldThrowHttpRequestException(ManifestType manifestType, string httpClientResponse)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, manifestType);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.BadGateway);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         Func<Task> act = () => _manifestService.GetFromManifestAsync("InvalidBundle");
@@ -97,10 +97,10 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_DevelopmentInvalidBundle_ShouldReturnNull(ManifestType manifestType, string httpClientResponse)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, manifestType);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, httpClientResponse, true);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _manifestService.GetFromManifestAsync("InvalidBundle");
@@ -122,10 +122,10 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string? resultBundle)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, manifestType);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, httpClientResponse, true);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _manifestService.GetFromManifestAsync(bundle);
@@ -145,10 +145,10 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_ProductionInvalidBundle_ShouldReturnNull(ManifestType manifestType, string httpClientResponse)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, manifestType);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, httpClientResponse, true);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _manifestService.GetFromManifestAsync("InvalidBundle");
@@ -170,10 +170,10 @@ public sealed class ManifestServiceTests : IDisposable
     public async Task GetFromManifest_ProductionValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production, manifestType);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, manifestType);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, httpClientResponse, true);
         var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
-        _manifestService = new ManifestService(sharedSettingsMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _manifestService.GetFromManifestAsync(bundle);

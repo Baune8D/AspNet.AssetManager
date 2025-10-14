@@ -19,30 +19,30 @@ namespace AspNet.AssetManager;
 public sealed class TagBuilder : ITagBuilder, IDisposable
 {
     private readonly Dictionary<string, string> _inlineStyles = new();
-    private readonly ISharedSettings _sharedSettings;
+    private readonly IAssetConfiguration _assetConfiguration;
     private readonly IFileSystem _fileSystem;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TagBuilder"/> class.
     /// </summary>
-    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="assetConfiguration">Shared settings.</param>
     /// <param name="fileSystem">File system.</param>
-    public TagBuilder(ISharedSettings sharedSettings, IFileSystem fileSystem)
+    public TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
     {
-        _sharedSettings = sharedSettings;
+        _assetConfiguration = assetConfiguration;
         _fileSystem = fileSystem;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TagBuilder"/> class.
     /// </summary>
-    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="assetConfiguration">Shared settings.</param>
     /// <param name="fileSystem">File system.</param>
     /// <param name="httpClientFactory">HttpClient factory.</param>
-    public TagBuilder(ISharedSettings sharedSettings, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
-        : this(sharedSettings, fileSystem)
+    public TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
+        : this(assetConfiguration, fileSystem)
     {
-        if (_sharedSettings.DevelopmentMode)
+        if (_assetConfiguration.DevelopmentMode)
         {
             HttpClient = httpClientFactory.CreateClient();
         }
@@ -66,9 +66,9 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
     {
         var attributes = new List<string>();
 
-        if (_sharedSettings.DevelopmentMode)
+        if (_assetConfiguration.DevelopmentMode)
         {
-            if (_sharedSettings.ManifestType == ManifestType.Vite)
+            if (_assetConfiguration.ManifestType == ManifestType.Vite)
             {
                 attributes.Add("type=\"module\"");
             }
@@ -95,7 +95,7 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
 
         var space = attributes.Count != 0 ? " " : string.Empty;
 
-        return $"<script src=\"{_sharedSettings.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
+        return $"<script src=\"{_assetConfiguration.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
     }
 
     /// <summary>
@@ -106,12 +106,12 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
     public string BuildLinkTag(string file)
     {
         var crossOrigin = string.Empty;
-        if (_sharedSettings.DevelopmentMode)
+        if (_assetConfiguration.DevelopmentMode)
         {
             crossOrigin = "crossorigin=\"anonymous\" ";
         }
 
-        return $"<link href=\"{_sharedSettings.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
+        return $"<link href=\"{_assetConfiguration.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
     {
         ArgumentNullException.ThrowIfNull(file);
 
-        if (!_sharedSettings.DevelopmentMode && _inlineStyles.TryGetValue(file, out var cached))
+        if (!_assetConfiguration.DevelopmentMode && _inlineStyles.TryGetValue(file, out var cached))
         {
             return cached;
         }
@@ -135,15 +135,15 @@ public sealed class TagBuilder : ITagBuilder, IDisposable
             filename = filename[..queryIndex];
         }
 
-        var fullPath = $"{_sharedSettings.AssetsDirectoryPath}{filename}";
+        var fullPath = $"{_assetConfiguration.AssetsDirectoryPath}{filename}";
 
-        var style = _sharedSettings.DevelopmentMode
+        var style = _assetConfiguration.DevelopmentMode
             ? await FetchDevelopmentStyleAsync(HttpClient, fullPath).ConfigureAwait(false)
             : await _fileSystem.File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
 
         var result = $"<style>{style}</style>";
 
-        if (!_sharedSettings.DevelopmentMode)
+        if (!_assetConfiguration.DevelopmentMode)
         {
             _inlineStyles.Add(file, result);
         }

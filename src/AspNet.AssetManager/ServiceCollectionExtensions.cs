@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
 
         serviceCollection.Configure<AssetManagerOptions>(configuration.GetSection("AssetManager"));
         serviceCollection.TryAddTransient<IFileSystem, FileSystem>();
-        serviceCollection.AddSingleton<ISharedSettings, SharedSettings>();
+        serviceCollection.AddSingleton<IAssetConfiguration, AssetConfiguration>();
         serviceCollection.AddSingleton<ITagBuilder, TagBuilder>();
         serviceCollection.AddSingleton<IManifestService, ManifestService>();
         serviceCollection.AddSingleton<IAssetService, AssetService>();

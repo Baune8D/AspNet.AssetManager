@@ -1,4 +1,4 @@
-// <copyright file="SharedSettings.cs" company="Morten Larsen">
+// <copyright file="AssetConfiguration.cs" company="Morten Larsen">
 // Copyright (c) Morten Larsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
@@ -13,14 +13,14 @@ namespace AspNet.AssetManager;
 /// <summary>
 /// A collection of shared settings for other services.
 /// </summary>
-public class SharedSettings : ISharedSettings
+public class AssetConfiguration : IAssetConfiguration
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SharedSettings"/> class.
+    /// Initializes a new instance of the <see cref="AssetConfiguration"/> class.
     /// </summary>
     /// <param name="options">Asset manager options.</param>
     /// <param name="webHostEnvironment">Web host environment.</param>
-    public SharedSettings(IOptions<AssetManagerOptions> options, IWebHostEnvironment webHostEnvironment)
+    public AssetConfiguration(IOptions<AssetManagerOptions> options, IWebHostEnvironment webHostEnvironment)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(webHostEnvironment);

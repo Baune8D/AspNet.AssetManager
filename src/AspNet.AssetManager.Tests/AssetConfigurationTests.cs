@@ -1,4 +1,4 @@
-// <copyright file="SharedSettingsTests.cs" company="Morten Larsen">
+// <copyright file="AssetConfigurationTests.cs" company="Morten Larsen">
 // Copyright (c) Morten Larsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
@@ -13,7 +13,7 @@ using Xunit;
 
 namespace AspNet.AssetManager.Tests;
 
-public class SharedSettingsTests
+public class AssetConfigurationTests
 {
     private const string PublicDevServer = "https://public.dev";
     private const string InternalDevServer = "https://internal.dev";
@@ -35,7 +35,7 @@ public class SharedSettingsTests
         var webHostEnvironment = new Mock<IWebHostEnvironment>();
 
         // Act
-        Action act = () => _ = new SharedSettings(null!, webHostEnvironment.Object);
+        Action act = () => _ = new AssetConfiguration(null!, webHostEnvironment.Object);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -47,7 +47,7 @@ public class SharedSettingsTests
     {
         // Act
         var optionsMock = MockOptions(InternalDevServer);
-        Action act = () => _ = new SharedSettings(optionsMock.Object, null!);
+        Action act = () => _ = new AssetConfiguration(optionsMock.Object, null!);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -64,14 +64,14 @@ public class SharedSettingsTests
         var webHostEnvironmentMock = DependencyMocker.GetWebHostEnvironment(TestValues.Development);
 
         // Act
-        var sharedSettings = new SharedSettings(optionsMock.Object, webHostEnvironmentMock.Object);
+        var assetConfiguration = new AssetConfiguration(optionsMock.Object, webHostEnvironmentMock.Object);
 
         // Assert
-        sharedSettings.DevelopmentMode.Should().BeTrue();
-        sharedSettings.AssetsDirectoryPath.Should().Be(DevAssetsDirectoryPathResult(internalDevServer));
-        sharedSettings.AssetsWebPath.Should().Be(DevAssetsWebPathResult);
-        sharedSettings.ManifestPath.Should().Be(DevManifestPathResult(internalDevServer));
-        sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
+        assetConfiguration.DevelopmentMode.Should().BeTrue();
+        assetConfiguration.AssetsDirectoryPath.Should().Be(DevAssetsDirectoryPathResult(internalDevServer));
+        assetConfiguration.AssetsWebPath.Should().Be(DevAssetsWebPathResult);
+        assetConfiguration.ManifestPath.Should().Be(DevManifestPathResult(internalDevServer));
+        assetConfiguration.ManifestType.Should().Be(ManifestType.KeyValue);
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();
     }
@@ -86,14 +86,14 @@ public class SharedSettingsTests
         var webHostEnvironmentMock = DependencyMocker.GetWebHostEnvironment(TestValues.Production);
 
         // Act
-        var sharedSettings = new SharedSettings(optionsMock.Object, webHostEnvironmentMock.Object);
+        var assetConfiguration = new AssetConfiguration(optionsMock.Object, webHostEnvironmentMock.Object);
 
         // Assert
-        sharedSettings.DevelopmentMode.Should().BeFalse();
-        sharedSettings.AssetsDirectoryPath.Should().Be(ProdAssetsDirectoryPathResult);
-        sharedSettings.AssetsWebPath.Should().Be(ProdAssetsWebPathResult);
-        sharedSettings.ManifestPath.Should().Be(ProdManifestPathResult);
-        sharedSettings.ManifestType.Should().Be(ManifestType.KeyValue);
+        assetConfiguration.DevelopmentMode.Should().BeFalse();
+        assetConfiguration.AssetsDirectoryPath.Should().Be(ProdAssetsDirectoryPathResult);
+        assetConfiguration.AssetsWebPath.Should().Be(ProdAssetsWebPathResult);
+        assetConfiguration.ManifestPath.Should().Be(ProdManifestPathResult);
+        assetConfiguration.ManifestType.Should().Be(ManifestType.KeyValue);
         webHostEnvironmentMock.VerifyGet(x => x.EnvironmentName, Times.Once);
         webHostEnvironmentMock.VerifyGet(x => x.WebRootPath, Times.Once);
         webHostEnvironmentMock.VerifyNoOtherCalls();

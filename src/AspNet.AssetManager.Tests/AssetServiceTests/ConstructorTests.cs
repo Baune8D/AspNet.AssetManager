@@ -13,7 +13,7 @@ namespace AspNet.AssetManager.Tests.AssetServiceTests;
 public sealed class ConstructorTests
 {
     [Fact]
-    public void Constructor_SharedSettingsNull_ShouldThrowArgumentNullException()
+    public void Constructor_AssetConfigurationNull_ShouldThrowArgumentNullException()
     {
         // Arrange
         var manifestServiceMock = new Mock<IManifestService>();
@@ -35,13 +35,13 @@ public sealed class ConstructorTests
         const string assetsDirectoryPath = "SomeDirectoryPath";
         const string assetsWebPath = "SomeWebPath";
 
-        var sharedSettingsMock = new Mock<ISharedSettings>();
+        var assetConfigurationMock = new Mock<IAssetConfiguration>();
 
-        sharedSettingsMock
+        assetConfigurationMock
             .SetupGet(x => x.AssetsDirectoryPath)
             .Returns(assetsDirectoryPath);
 
-        sharedSettingsMock
+        assetConfigurationMock
             .SetupGet(x => x.AssetsWebPath)
             .Returns(assetsWebPath);
 
@@ -49,7 +49,7 @@ public sealed class ConstructorTests
         var tagBuilderMock = new Mock<ITagBuilder>();
 
         // Act
-        var result = new AssetService(sharedSettingsMock.Object, manifestServiceMock.Object, tagBuilderMock.Object);
+        var result = new AssetService(assetConfigurationMock.Object, manifestServiceMock.Object, tagBuilderMock.Object);
 
         // Assert
         result.DirectoryPath.Should().Be(assetsDirectoryPath);

@@ -36,8 +36,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_InvalidScriptLoad_ShouldThrowInvalidEnumArgumentException()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         Action act = () => _tagBuilder.BuildScriptTag(Bundle, (ScriptLoad)6);
@@ -50,8 +50,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_Development_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
@@ -68,8 +68,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_DevelopmentVite_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development, ManifestType.Vite);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
@@ -86,8 +86,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_DevelopmentAsyncScriptLoad_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Async);
@@ -104,8 +104,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_DevelopmentDeferScriptLoad_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Defer);
@@ -122,8 +122,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_DevelopmentAsyncDeferScriptLoad_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.AsyncDefer);
@@ -140,8 +140,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_Production_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
@@ -157,8 +157,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildScriptTag_ProductionVite_ShouldReturnScriptTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production, ManifestType.Vite);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
@@ -175,8 +175,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildLinkTag_Development_ShouldReturnLinkTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildLinkTag(Bundle);
@@ -190,8 +190,8 @@ public sealed class TagBuilderTests : IDisposable
     public void BuildLinkTag_Production_ShouldReturnLinkTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = _tagBuilder.BuildLinkTag(Bundle);
@@ -205,15 +205,15 @@ public sealed class TagBuilderTests : IDisposable
     public async Task BuildStyleTag_Null_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         Func<Task> act = () => _tagBuilder.BuildStyleTagAsync(null!);
 
         // Assert
         await act.Should().ThrowExactlyAsync<ArgumentNullException>();
-        sharedSettingsMock.VerifyNoOtherCalls();
+        assetConfigurationMock.VerifyNoOtherCalls();
         _fileSystemMock.VerifyNoOtherCalls();
     }
 
@@ -221,8 +221,8 @@ public sealed class TagBuilderTests : IDisposable
     public async Task BuildStyleTag_DevelopmentNoHttpClient_ShouldThrowArgumentNullException()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         Func<Task> act = () => _tagBuilder.BuildStyleTagAsync("InvalidBundle");
@@ -236,9 +236,9 @@ public sealed class TagBuilderTests : IDisposable
     public async Task BuildStyleTag_Development_ShouldReturnStyleTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
@@ -256,9 +256,9 @@ public sealed class TagBuilderTests : IDisposable
     public async Task BuildStyleTag_DevelopmentQueryString_ShouldReturnStyleTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
         var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
 
         // Act
         var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
@@ -276,8 +276,8 @@ public sealed class TagBuilderTests : IDisposable
     public async Task BuildStyleTag_Production_ShouldReturnStyleTag()
     {
         // Arrange
-        var sharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Production);
-        _tagBuilder = new TagBuilder(sharedSettingsMock.Object, _fileSystemMock.Object);
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
 
         // Act
         var result = await _tagBuilder.BuildStyleTagAsync(Bundle);

@@ -22,15 +22,15 @@ public sealed class AssetService : IAssetService
     /// <summary>
     /// Initializes a new instance of the <see cref="AssetService"/> class.
     /// </summary>
-    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="assetConfiguration">Shared settings.</param>
     /// <param name="manifestService">Asset manifest service.</param>
     /// <param name="tagBuilder">Asset builder service.</param>
-    public AssetService(ISharedSettings sharedSettings, IManifestService manifestService, ITagBuilder tagBuilder)
+    public AssetService(IAssetConfiguration assetConfiguration, IManifestService manifestService, ITagBuilder tagBuilder)
     {
-        ArgumentNullException.ThrowIfNull(sharedSettings);
+        ArgumentNullException.ThrowIfNull(assetConfiguration);
 
-        DirectoryPath = sharedSettings.AssetsDirectoryPath;
-        WebPath = sharedSettings.AssetsWebPath;
+        DirectoryPath = assetConfiguration.AssetsDirectoryPath;
+        WebPath = assetConfiguration.AssetsWebPath;
 
         _manifestService = manifestService;
         _tagBuilder = tagBuilder;

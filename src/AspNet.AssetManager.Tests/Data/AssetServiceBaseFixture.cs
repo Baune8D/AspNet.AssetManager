@@ -38,11 +38,11 @@ public abstract class AssetServiceBaseFixture
         ValidTestBundle = validTestBundle;
         ValidFallbackTestBundle = validFallbackTestBundle;
 
-        SharedSettingsMock = DependencyMocker.GetSharedSettings(TestValues.Development);
+        AssetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
         ManifestServiceMock = new Mock<IManifestService>();
         TagBuilderMock = new Mock<ITagBuilder>();
 
-        AssetService = new AssetService(SharedSettingsMock.Object, ManifestServiceMock.Object, TagBuilderMock.Object);
+        AssetService = new AssetService(AssetConfigurationMock.Object, ManifestServiceMock.Object, TagBuilderMock.Object);
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public abstract class AssetServiceBaseFixture
     /// </summary>
     protected string ValidFallbackBundleResult => $"{ValidFallbackTestBundle}";
 
-    private Mock<ISharedSettings> SharedSettingsMock { get; }
+    private Mock<IAssetConfiguration> AssetConfigurationMock { get; }
 
     private Mock<IManifestService> ManifestServiceMock { get; }
 
@@ -83,7 +83,7 @@ public abstract class AssetServiceBaseFixture
     /// </summary>
     protected void VerifyDependencies()
     {
-        SharedSettingsMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Once);
+        AssetConfigurationMock.VerifyGet(x => x.AssetsDirectoryPath, Times.Once);
     }
 
     /// <summary>

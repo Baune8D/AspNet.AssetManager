@@ -19,7 +19,7 @@ namespace AspNet.AssetManager;
 /// </summary>
 public sealed class ManifestService : IManifestService, IDisposable
 {
-    private readonly ISharedSettings _sharedSettings;
+    private readonly IAssetConfiguration _assetConfiguration;
     private readonly IFileSystem _fileSystem;
 
     private JsonDocument? _manifest;
@@ -27,24 +27,24 @@ public sealed class ManifestService : IManifestService, IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="ManifestService"/> class.
     /// </summary>
-    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="assetConfiguration">Shared settings.</param>
     /// <param name="fileSystem">File system.</param>
-    public ManifestService(ISharedSettings sharedSettings, IFileSystem fileSystem)
+    public ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
     {
-        _sharedSettings = sharedSettings;
+        _assetConfiguration = assetConfiguration;
         _fileSystem = fileSystem;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ManifestService"/> class.
     /// </summary>
-    /// <param name="sharedSettings">Shared settings.</param>
+    /// <param name="assetConfiguration">Shared settings.</param>
     /// <param name="fileSystem">File system.</param>
     /// <param name="httpClientFactory">HttpClient factory.</param>
-    public ManifestService(ISharedSettings sharedSettings, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
-        : this(sharedSettings, fileSystem)
+    public ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
+        : this(assetConfiguration, fileSystem)
     {
-        if (_sharedSettings.DevelopmentMode)
+        if (_assetConfiguration.DevelopmentMode)
         {
             HttpClient = httpClientFactory.CreateClient();
         }
@@ -72,12 +72,12 @@ public sealed class ManifestService : IManifestService, IDisposable
 
         if (_manifest == null)
         {
-            var json = _sharedSettings.DevelopmentMode
-                ? await FetchDevelopmentManifestAsync(HttpClient, _sharedSettings.ManifestPath).ConfigureAwait(false)
-                : await _fileSystem.File.ReadAllTextAsync(_sharedSettings.ManifestPath).ConfigureAwait(false);
+            var json = _assetConfiguration.DevelopmentMode
+                ? await FetchDevelopmentManifestAsync(HttpClient, _assetConfiguration.ManifestPath).ConfigureAwait(false)
+                : await _fileSystem.File.ReadAllTextAsync(_assetConfiguration.ManifestPath).ConfigureAwait(false);
 
             manifest = JsonDocument.Parse(json);
-            if (!_sharedSettings.DevelopmentMode)
+            if (!_assetConfiguration.DevelopmentMode)
             {
                 _manifest = manifest;
             }
@@ -87,7 +87,7 @@ public sealed class ManifestService : IManifestService, IDisposable
             manifest = _manifest;
         }
 
-        if (_sharedSettings.ManifestType == ManifestType.Vite)
+        if (_assetConfiguration.ManifestType == ManifestType.Vite)
         {
             return GetFromViteManifest(manifest, bundle);
         }
@@ -123,7 +123,7 @@ public sealed class ManifestService : IManifestService, IDisposable
 
             if (!bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
             {
-                return _sharedSettings.DevelopmentMode
+                return _assetConfiguration.DevelopmentMode
                     ? entry.GetProperty("src").GetString()
                     : entry.GetProperty("file").GetString();
             }

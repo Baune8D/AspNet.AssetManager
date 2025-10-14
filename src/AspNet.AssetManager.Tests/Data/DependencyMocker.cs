@@ -72,16 +72,16 @@ public static class DependencyMocker
     }
 
     /// <summary>
-    /// Mock ISharedSettings.
+    /// Mock IAssetConfiguration.
     /// </summary>
     /// <param name="environmentName">The environment name.</param>
     /// <param name="manifestType">The manifest type.</param>
     /// <returns>The SharedSettings object.</returns>
-    public static Mock<ISharedSettings> GetSharedSettings(string environmentName, ManifestType manifestType = ManifestType.KeyValue)
+    public static Mock<IAssetConfiguration> GetAssetConfiguration(string environmentName, ManifestType manifestType = ManifestType.KeyValue)
     {
         var isDevelopment = environmentName == TestValues.Development;
 
-        var sharedSettings = new Mock<ISharedSettings>();
+        var sharedSettings = new Mock<IAssetConfiguration>();
 
         sharedSettings
             .SetupGet(x => x.DevelopmentMode)
