@@ -59,6 +59,7 @@ class Build : NukeBuild
 
     static IEnumerable<AbsolutePath> Artifacts => ArtifactsDirectory.GlobFiles("*.nupkg");
 
+    // ReSharper disable once UnusedMember.Local
     Target Clean => _ => _
         .Before(Compile)
         .Executes(() =>
