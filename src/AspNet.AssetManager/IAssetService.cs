@@ -16,6 +16,7 @@ public interface IAssetService
     /// <summary>
     /// Gets the directory path where asset files are stored.
     /// </summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
     string DirectoryPath { get; }
 
     /// <summary>

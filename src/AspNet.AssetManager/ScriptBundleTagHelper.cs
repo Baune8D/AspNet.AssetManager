@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -16,6 +17,7 @@ namespace AspNet.AssetManager;
 /// with support for fallback, async, and defer attributes.
 /// </summary>
 [OutputElementHint("script")]
+[UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
 public class ScriptBundleTagHelper(
     IHtmlHelper htmlHelper,
     IAssetService assetService,

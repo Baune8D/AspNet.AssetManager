@@ -18,22 +18,22 @@ internal sealed class HtmlHelperStub(string view) : IHtmlHelper
 {
     public Html5DateRenderingMode Html5DateRenderingMode { get; set; }
 
-    public string IdAttributeDotReplacement { get; } = null!;
+    public string IdAttributeDotReplacement => null!;
 
-    public IModelMetadataProvider MetadataProvider { get; } = null!;
+    public IModelMetadataProvider MetadataProvider => null!;
 
-    public ITempDataDictionary TempData { get; } = null!;
+    public ITempDataDictionary TempData => null!;
 
-    public UrlEncoder UrlEncoder { get; } = null!;
+    public UrlEncoder UrlEncoder => null!;
 
-    public dynamic ViewBag { get; } = null!;
+    public dynamic ViewBag => null!;
 
     public ViewContext ViewContext { get; } = new()
     {
         View = new ViewStub(view),
     };
 
-    public ViewDataDictionary ViewData { get; } = null!;
+    public ViewDataDictionary ViewData => null!;
 
     public IHtmlContent ActionLink(string linkText, string actionName, string controllerName, string protocol, string hostname, string fragment, object routeValues, object htmlAttributes)
     {

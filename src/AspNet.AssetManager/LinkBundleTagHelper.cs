@@ -5,6 +5,7 @@
 
 using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -15,6 +16,7 @@ namespace AspNet.AssetManager;
 /// A TagHelper responsible for rendering a link tag for CSS bundles.
 /// </summary>
 [OutputElementHint("link")]
+[UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
 public class LinkBundleTagHelper(
     IHtmlHelper htmlHelper,
     IAssetService assetService,
