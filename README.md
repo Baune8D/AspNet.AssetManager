@@ -3,67 +3,77 @@
 [![codecov](https://codecov.io/gh/Baune8D/AspNet.AssetManager/branch/main/graph/badge.svg?token=M4KiXgJBnw)](https://codecov.io/gh/Baune8D/AspNet.AssetManager)
 ![NuGet Version](https://img.shields.io/nuget/v/AspNet.AssetManager)
 
+Minimal asset manager for ASP.NET Core that reads your frontend tool's manifest (Vite or key-value) and renders the correct tags/paths in development and production.
+
+- Simple TagHelpers: `<link-bundle />` and `<script-bundle />`
+- Automatic bundle name inference from the active view.
+- Optional per-view overrides via `ViewData["Bundle"]`
+- Works with a dev server (e.g., `Vite`, `Webpack`) in development, and static files in production.
+
 See the template repository, for usage examples: [AspNet.Frontends](https://github.com/Baune8D/AspNet.Frontends)
 
-Initialize `AspNet.AssetManager` in `Program.cs`:
+## Install
+
+```bash
+dotnet add package AspNet.AssetManager
+```
+
+## Quick start
+
+Register services in `Program.cs`:
+
 ```csharp
+using AspNet.AssetManager;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAssetManager(builder.Configuration, builder.Environment);
 ```
 
-Use extensions to get the bundle name:
+Register tag helpers in `Views/_ViewImports.cshtml`:
+
 ```csharp
-var bundle = ViewData.GetBundleName() // Gets the bundle name from ViewData["Bundle"]
-var bundle = Html.GetBundleName() // Generates the bundle name from the view context
+@addTagHelper *, AspNet.AssetManager
 ```
 
-Recommended use in eg. `_Layout.cshtml`:
-```csharp
-var bundle = ViewData.GetBundleName() ?? Html.GetBundleName();
-// Generates the bundle name from the view context if not overridin in ViewData["Bundle"]
+Use in `Views/Shared/_Layout.cshtml`:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - AspNet.AssetManager</title>
+  <link-bundle fallback="Layout" />
+</head>
+<body>
+  @RenderBody()
+  <script-bundle defer fallback="Layout" />
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
 ```
 
-Use `AssetService` to get assets:
-```csharp
-@inject IAssetService AssetService
+### How bundle names are chosen
 
-@await AssetService.WebPath
-// Returns: /web/path
+- By default, the bundle name is inferred from the active view.
+  - **Example**: `/Views/Home/Index.cshtml` -> `Views_Home_Index`
+- You can override it using `ViewData["Bundle"]`. Two forms are supported:
+  - A plain name e.g., `Home_Index`
+  - A view-like path starting with a slash e.g., `/Views/Home/Index`, which will be converted to the bundle name: `Views_Home_Index`
 
-@await AssetService.GetBundlePathAsync("SomeBundle.js")
-// Returns: /web/path/SomeBundle.js
+### Development vs. production behavior
 
-@await AssetService.GetScriptTagAsync("SomeBundle")
-// Generates: <script src="/web/path/SomeBundle.js"></script>
+- **Development:**
+  - Manifest is fetched from the dev server. If the server is not running, you will see: `Development server not started!`.
+  - Tag helpers add `crossorigin="anonymous"` automatically; with `"ManifestType": "Vite"`, script tags also use `type="module"`.
+  - Paths point to the dev server: `PublicDevServer` + `PublicPath`.
+- **Production:**
+  - Manifest is read from disk: `wwwroot` + `PublicPath` + `ManifestFile`.
+  - Paths are relative to `PublicPath`, served by `UseStaticFiles()`.
 
-@await AssetService.GetLinkTagAsync("SomeBundle")
-// Generates: <link href="/web/path/SomeBundle.css" rel="stylesheet" />
+## Configuration (appsettings.json)
 
-@await AssetService.GetStyleTagAsync("SomeBundle")
-// Generates: <style>Inlined CSS</style
-```
-
-Overloads exist on `GetBundlePathAsync` in case no extension is applied for the bundle name:
-```csharp
-@await AssetService.GetBundlePathAsync("SomeBundle", FileType.JS)
-// Returns: /web/path/SomeBundle.js
-```
-
-Overloads exist on `GetScriptTagAsync` to change the load behavior to e.g. `async` and/or `defer`:
-```csharp
-@await AssetService.GetScriptTagAsync("SomeBundle", ScriptLoad.Async)
-// Generates: <script src="/web/path/SomeBundle.js" async></script>
-```
-
-A fallback bundle can be specified on: `GetScriptTagAsync`, `GetLinkTagAsync`, `GetStyleTagAsync`:
-```csharp
-@await AssetService.GetScriptTagAsync("SomeBundle", fallback: "FallbackBundle")
-// Generates: <script src="/web/path/SomeBundle.js"></script>
-// Or if 'SomeBundle' does not exist: <script src="/web/path/FallbackBundle.js"></script>
-```
-
-## Configuration: `appsettings.json`
 ```json
 {
   "AssetManager": {
@@ -76,32 +86,40 @@ A fallback bundle can be specified on: `GetScriptTagAsync`, `GetLinkTagAsync`, `
 }
 ```
 
-* **`PublicDevServer` is the only required setting.**
-* `ManifestType` can be either `KeyValue` or `Vite`.
+- **PublicDevServer**: required. The browser-facing URL of your dev server (e.g., Vite).
+- **InternalDevServer**: optional. If your app runs behind Docker/WSL/etc., point this to where the server is reachable from the app process. Falls back to `PublicDevServer` if omitted.
+- **PublicPath**: the public base path for built assets. In production this is under `wwwroot`; in development it is appended to the dev server URL. Default is `/dist/`.
+- **ManifestFile**: the filename of your manifest. Default is `assets-manifest.json`.
+- **ManifestType**: `KeyValue` or `Vite`. Default is `KeyValue` which matches the format used by `webpack-assets-manifest`.
 
-## Example: `_Layout.cshtml`
+## Manual rendering
 
-```razor
+If you prefer code-based rendering or need more control, inject IAssetService.
+
+```csharp
 @using AspNet.AssetManager
-
+  
 @inject IAssetService AssetService
 
 @{
     var bundle = ViewData.GetBundleName() ?? Html.GetBundleName();
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AspNet.AssetManager</title>
-    @await AssetService.GetLinkTagAsync(bundle, fallback: "Layout");
-</head>
-<body>
-    @RenderBody()
-    @await AssetService.GetScriptTagAsync(bundle, fallback: "Layout", ScriptLoad.Defer);
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+/* Base paths */
+@AssetService.WebPath
+
+/* Resolve paths */
+@await AssetService.GetBundlePathAsync("SomeBundle.js")
+@await AssetService.GetBundlePathAsync("SomeBundle", FileType.JS)
+
+/* Script tags */
+@await AssetService.GetScriptTagAsync("SomeBundle")
+@await AssetService.GetScriptTagAsync("SomeBundle", ScriptLoad.Async)
+@await AssetService.GetScriptTagAsync("SomeBundle", "FallbackBundle", ScriptLoad.Async)
+
+/* Link tags */
+@await AssetService.GetLinkTagAsync("SomeBundle")
+
+/* Style tags */
+@await AssetService.GetStyleTagAsync("SomeBundle")
 ```
