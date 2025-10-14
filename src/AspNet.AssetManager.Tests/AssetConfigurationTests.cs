@@ -17,7 +17,7 @@ public class AssetConfigurationTests
 {
     private const string PublicDevServer = "https://public.dev";
     private const string InternalDevServer = "https://internal.dev";
-    private const string PublicPath = "/public";
+    private const string PublicPath = "/public/";
     private const string ManifestFile = "manifest.json";
 
     private static string DevAssetsWebPathResult => $"{PublicDevServer}{PublicPath}";

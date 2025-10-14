@@ -21,9 +21,14 @@ internal class AssetConfiguration : IAssetConfiguration
 
         ManifestType = options.Value.ManifestType;
 
-        var publicPath = DevelopmentMode && ManifestType == ManifestType.Vite
-            ? "/"
-            : options.Value.PublicPath;
+        var publicPath = options.Value.PublicPath;
+
+        if (!options.Value.PublicPath.EndsWith('/'))
+        {
+            publicPath += "/";
+        }
+
+        publicPath = DevelopmentMode && ManifestType == ManifestType.Vite ? "/" : publicPath;
 
         AssetsDirectoryPath = DevelopmentMode
             ? (options.Value.InternalDevServer ?? options.Value.PublicDevServer) + publicPath
