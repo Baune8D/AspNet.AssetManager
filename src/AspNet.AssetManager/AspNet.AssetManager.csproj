@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-    <Authors>Morten Larsen</Authors>
+    <Authors>Baune8D</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Utilities for managing modern frontend build tools in ASP.NET projects</Description>
     <RepositoryType>git</RepositoryType>

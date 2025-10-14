@@ -1,5 +1,5 @@
-// <copyright file="ViewDataExtensionsTests.cs" company="Morten Larsen">
-// Copyright (c) Morten Larsen. All rights reserved.
+// <copyright file="ViewDataExtensionsTests.cs" company="Baune8D">
+// Copyright (c) Baune8D. All rights reserved.
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
 
