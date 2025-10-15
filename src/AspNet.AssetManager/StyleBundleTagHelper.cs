@@ -60,6 +60,6 @@ public class StyleBundleTagHelper(IHtmlHelper htmlHelper, IAssetService assetSer
         var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
         var content = await assetService.GetStyleContent(bundle, Fallback).ConfigureAwait(false);
 
-        output.Content.SetContent(content ?? string.Empty);
+        output.Content.SetHtmlContent(content ?? string.Empty);
     }
 }
