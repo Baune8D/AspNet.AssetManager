@@ -32,6 +32,12 @@ public class ScriptBundleTagHelper(
     public required ViewContext ViewContext { get; set; }
 
     /// <summary>
+    /// Gets or sets the name of the script bundle to generate.
+    /// This is used to specify the bundle identifier that will be resolved into a script source URL.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     /// Gets or sets the fallback value used when a JavaScript bundle source cannot be resolved.
     /// </summary>
     public string? Fallback { get; set; }
@@ -70,7 +76,7 @@ public class ScriptBundleTagHelper(
         output.TagName = "script";
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var bundle = ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
+        var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
         var file = await assetService.GetScriptSrc(bundle, Fallback).ConfigureAwait(false);
 
         output.Attributes.SetAttribute("src", $"{assetConfiguration.AssetsWebPath}{file}");

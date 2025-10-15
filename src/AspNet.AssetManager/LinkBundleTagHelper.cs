@@ -32,6 +32,13 @@ public class LinkBundleTagHelper(
     public required ViewContext ViewContext { get; set; }
 
     /// <summary>
+    /// Gets or sets the name of the CSS bundle to be rendered by the tag helper.
+    /// This property is used to identify the bundle for which the link tag will be generated.
+    /// If not provided, the bundle name may be resolved from the current view context or HTML helper extensions.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     /// Gets or sets the fallback bundle name to be used if the primary bundle is unavailable.
     /// </summary>
     public string? Fallback { get; set; }
@@ -54,7 +61,7 @@ public class LinkBundleTagHelper(
         output.TagName = "link";
         output.TagMode = TagMode.SelfClosing;
 
-        var bundle = ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
+        var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
         var file = await assetService.GetLinkHref(bundle, Fallback).ConfigureAwait(false);
 
         output.Attributes.SetAttribute("href", $"{assetConfiguration.AssetsWebPath}{file}");
