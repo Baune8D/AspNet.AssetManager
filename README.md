@@ -3,9 +3,9 @@
 [![codecov](https://codecov.io/gh/Baune8D/AspNet.AssetManager/branch/main/graph/badge.svg?token=M4KiXgJBnw)](https://codecov.io/gh/Baune8D/AspNet.AssetManager)
 ![NuGet Version](https://img.shields.io/nuget/v/AspNet.AssetManager)
 
-Minimal asset manager for ASP.NET Core that reads your frontend tool's manifest (Vite or key-value) and renders the correct tags/paths in development and production.
+Asset manager for ASP.NET Core that enables use of modern frontend tooling.
 
-- Simple TagHelpers: `<link-bundle />` and `<script-bundle />`
+- Simple TagHelpers: `<link-bundle />`, `<style-bundle />` and `<script-bundle />`
 - Automatic bundle name inference from the active view.
 - Optional per-view overrides via `ViewData["Bundle"]`
 - Works with a dev server (e.g., `Vite`, `Webpack`) in development, and static files in production.
@@ -58,9 +58,8 @@ Use in `Views/Shared/_Layout.cshtml`:
 
 - By default, the bundle name is inferred from the active view.
   - **Example**: `/Views/Home/Index.cshtml` -> `Views_Home_Index`
-- You can override it using `ViewData["Bundle"]`. Two forms are supported:
-  - A plain name e.g., `Home_Index`
-  - A view-like path starting with a slash e.g., `/Views/Home/Index`, which will be converted to the bundle name: `Views_Home_Index`
+- You can override the bundle chosen from view inference using `ViewData["Bundle"]`.
+- A bundle name can be directly provided to a tag helper using the `name` attribute.
 
 ### Development vs. production behavior
 
@@ -94,7 +93,7 @@ Use in `Views/Shared/_Layout.cshtml`:
 
 ## Manual rendering
 
-If you prefer code-based rendering or need more control, inject IAssetService.
+If you prefer code-based rendering or need more control, inject `IAssetService`.
 
 ```csharp
 @using AspNet.AssetManager
