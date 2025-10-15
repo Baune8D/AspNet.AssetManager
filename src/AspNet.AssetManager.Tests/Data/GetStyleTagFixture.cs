@@ -16,8 +16,8 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
 
     public const string ValidFallbackBundleWithExtension = $"{ValidFallbackBundleWithoutExtension}.css";
 
-    private const string StyleTag = "<style>Some Content</script>";
-    private const string FallbackStyleTag = "<style>Some Fallback Content</style>";
+    private const string StyleTag = $"<style>{BundleContent}</script>";
+    private const string FallbackStyleTag = $"<style>{FallbackBundleContent}</script>";
 
     public GetStyleTagFixture(string bundle, string? fallbackBundle = null)
         : base(ValidBundleWithExtension, ValidFallbackBundleWithExtension)
@@ -25,8 +25,8 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
         Bundle = bundle;
         FallbackBundle = fallbackBundle;
         SetupGetFromManifest();
-        SetupBuildStyleTag(ValidBundleResult, StyleTag);
-        SetupBuildStyleTag(ValidFallbackBundleResult, FallbackStyleTag);
+        SetupGetFileContent();
+        SetupBuildStyleTag();
     }
 
     private string Bundle { get; }
@@ -60,7 +60,8 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
         result.Should().BeEquivalentTo(new HtmlString(StyleTag));
         VerifyDependencies();
         VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
-        VerifyBuildStyleTag(ValidBundleResult);
+        VerifyGetFileContent(ValidBundleWithExtension);
+        VerifyBuildStyleTag(BundleContent);
         VerifyNoOtherCalls();
     }
 
@@ -85,15 +86,20 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
         result.Should().BeEquivalentTo(new HtmlString(FallbackStyleTag));
         VerifyDependencies();
         VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
-        VerifyBuildStyleTag(ValidFallbackBundleResult);
+        VerifyGetFileContent(ValidFallbackBundleWithExtension);
+        VerifyBuildStyleTag(FallbackBundleContent);
         VerifyNoOtherCalls();
     }
 
-    private void SetupBuildStyleTag(string resultBundle, string returnValue)
+    private void SetupBuildStyleTag()
     {
         TagBuilderMock
-            .Setup(x => x.BuildStyleTag(resultBundle))
-            .Returns(returnValue);
+            .Setup(x => x.BuildStyleTag(BundleContent))
+            .Returns(StyleTag);
+
+        TagBuilderMock
+            .Setup(x => x.BuildStyleTag(FallbackBundleContent))
+            .Returns(FallbackStyleTag);
     }
 
     private void VerifyBuildStyleTag(string resultBundle)

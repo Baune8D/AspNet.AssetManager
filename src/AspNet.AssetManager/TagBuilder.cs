@@ -3,44 +3,20 @@
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO.Abstractions;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace AspNet.AssetManager;
 
-internal sealed class TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
-    : ITagBuilder, IDisposable
+internal sealed class TagBuilder(IAssetConfiguration assetConfiguration) : ITagBuilder
 {
-    private readonly Dictionary<string, string> _inlineStyles = new();
-    private readonly IAssetConfiguration _assetConfiguration = assetConfiguration;
-
-    public TagBuilder(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
-        : this(assetConfiguration, fileSystem)
-    {
-        if (_assetConfiguration.DevelopmentMode)
-        {
-            HttpClient = httpClientFactory.CreateClient();
-        }
-    }
-
-    private HttpClient? HttpClient { get; }
-
-    public void Dispose()
-    {
-        HttpClient?.Dispose();
-    }
-
     public string BuildScriptTag(string file, ScriptLoad load)
     {
         var attributes = new List<string>();
 
-        if (_assetConfiguration.DevelopmentMode)
+        if (assetConfiguration.DevelopmentMode)
         {
-            if (_assetConfiguration.ManifestType == ManifestType.Vite)
+            if (assetConfiguration.ManifestType == ManifestType.Vite)
             {
                 attributes.Add("type=\"module\"");
             }
@@ -67,59 +43,22 @@ internal sealed class TagBuilder(IAssetConfiguration assetConfiguration, IFileSy
 
         var space = attributes.Count != 0 ? " " : string.Empty;
 
-        return $"<script src=\"{_assetConfiguration.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
+        return $"<script src=\"{assetConfiguration.AssetsWebPath}{file}\"{space}{string.Join(' ', attributes)}></script>";
     }
 
     public string BuildLinkTag(string file)
     {
         var crossOrigin = string.Empty;
-        if (_assetConfiguration.DevelopmentMode)
+        if (assetConfiguration.DevelopmentMode)
         {
             crossOrigin = "crossorigin=\"anonymous\" ";
         }
 
-        return $"<link href=\"{_assetConfiguration.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
+        return $"<link href=\"{assetConfiguration.AssetsWebPath}{file}\" rel=\"stylesheet\" {crossOrigin}/>";
     }
 
-    public async Task<string> BuildStyleTagAsync(string file)
+    public string BuildStyleTag(string content)
     {
-        ArgumentNullException.ThrowIfNull(file);
-
-        if (!_assetConfiguration.DevelopmentMode && _inlineStyles.TryGetValue(file, out var cached))
-        {
-            return cached;
-        }
-
-        var filename = file;
-        var queryIndex = filename.IndexOf('?', StringComparison.Ordinal);
-        if (queryIndex != -1)
-        {
-            filename = filename[..queryIndex];
-        }
-
-        var fullPath = $"{_assetConfiguration.AssetsDirectoryPath}{filename}";
-
-        var style = _assetConfiguration.DevelopmentMode
-            ? await FetchDevelopmentStyleAsync(HttpClient, fullPath).ConfigureAwait(false)
-            : await fileSystem.File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
-
-        var result = $"<style>{style}</style>";
-
-        if (!_assetConfiguration.DevelopmentMode)
-        {
-            _inlineStyles.Add(file, result);
-        }
-
-        return result;
-    }
-
-    private static async Task<string> FetchDevelopmentStyleAsync(HttpClient? httpClient, string fullPath)
-    {
-        if (httpClient == null)
-        {
-            throw new ArgumentNullException(nameof(httpClient), "HttpClient only available in development mode.");
-        }
-
-        return await httpClient.GetStringAsync(new Uri(fullPath)).ConfigureAwait(false);
+        return $"<style>{content}</style>";
     }
 }

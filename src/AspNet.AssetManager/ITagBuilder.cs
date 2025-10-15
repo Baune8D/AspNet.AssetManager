@@ -31,12 +31,9 @@ public interface ITagBuilder
     string BuildLinkTag(string file);
 
     /// <summary>
-    /// Builds an HTML style tag for including a CSS file in a web application.
+    /// Builds an HTML style tag to embed inline CSS content within a web application.
     /// </summary>
-    /// <param name="file">The path to the CSS file.</param>
-    /// <returns>
-    /// A task representing the asynchronous operation,
-    /// containing a string with the HTML style tag wrapping the content of the specified CSS file.
-    /// </returns>
-    Task<string> BuildStyleTagAsync(string file);
+    /// <param name="content">The CSS content to be wrapped within the style tag.</param>
+    /// <returns>A string containing the HTML style tag with the specified CSS content embedded.</returns>
+    string BuildStyleTag(string content);
 }

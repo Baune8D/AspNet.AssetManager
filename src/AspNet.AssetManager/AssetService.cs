@@ -100,12 +100,21 @@ internal sealed class AssetService : IAssetService
             : HtmlString.Empty;
     }
 
-    public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
+    public async Task<string?> GetStyleContent(string bundle, string? fallback = null)
     {
         var file = await GetLinkHref(bundle, fallback).ConfigureAwait(false);
 
         return file != null
-            ? new HtmlString(await _tagBuilder.BuildStyleTagAsync(file).ConfigureAwait(false))
+            ? await _manifestService.GetFileContentAsync(file).ConfigureAwait(false)
+            : null;
+    }
+
+    public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
+    {
+        var content = await GetStyleContent(bundle, fallback).ConfigureAwait(false);
+
+        return content != null
+            ? new HtmlString(_tagBuilder.BuildStyleTag(content))
             : HtmlString.Empty;
     }
 

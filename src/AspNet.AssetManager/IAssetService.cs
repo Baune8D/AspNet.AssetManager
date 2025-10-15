@@ -117,15 +117,23 @@ public interface IAssetService
     Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null);
 
     /// <summary>
+    /// Retrieves the CSS style content for the specified bundle,
+    /// optionally using a fallback if the bundle is not found.
+    /// </summary>
+    /// <param name="bundle">The name of the bundle representing the asset. Must not be null or empty.</param>
+    /// <param name="fallback">The optional name of a fallback bundle to use if the main bundle is unavailable.</param>
+    /// <returns>
+    /// A task that represents the asynchronous operation.
+    /// The task result contains the CSS style content if found; otherwise, null.
+    /// </returns>
+    Task<string?> GetStyleContent(string bundle, string? fallback = null);
+
+    /// <summary>
     /// Asynchronously generates an HTML style tag for the specified bundle. If the main bundle does not exist,
     /// a fallback bundle can be used to provide the style tag instead.
     /// </summary>
-    /// <param name="bundle">
-    /// The name of the bundle representing the asset. Must not be null or empty.
-    /// </param>
-    /// <param name="fallback">
-    /// The optional name of a fallback bundle to use if the main bundle is unavailable.
-    /// </param>
+    /// <param name="bundle">The name of the bundle representing the asset. Must not be null or empty.</param>
+    /// <param name="fallback">The optional name of a fallback bundle to use if the main bundle is unavailable.</param>
     /// <returns>
     /// A task representing the asynchronous operation,
     /// resulting in an HtmlString containing the generated HTML style tag.

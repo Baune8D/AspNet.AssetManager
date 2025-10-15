@@ -16,6 +16,10 @@ internal abstract class AssetServiceFixture
 
     public const string InvalidBundle = "InvalidBundle";
 
+    public const string BundleContent = "Bundle Content";
+
+    public const string FallbackBundleContent = "Fallback Bundle Content";
+
     protected AssetServiceFixture(string validTestBundle, string? validFallbackTestBundle = null)
     {
         ValidTestBundle = validTestBundle;
@@ -85,6 +89,11 @@ internal abstract class AssetServiceFixture
         }
     }
 
+    protected void VerifyGetFileContent(string file, Times? times = null)
+    {
+        ManifestServiceMock.Verify(x => x.GetFileContentAsync(file), times ?? Times.Once());
+    }
+
     protected void VerifyNoOtherCalls()
     {
         ManifestServiceMock.VerifyNoOtherCalls();
@@ -105,6 +114,24 @@ internal abstract class AssetServiceFixture
             ManifestServiceMock
                 .Setup(x => x.GetFromManifestAsync(ValidFallbackTestBundle))
                 .ReturnsAsync(ValidFallbackBundleResult);
+        }
+    }
+
+    protected void SetupGetFileContent()
+    {
+        ManifestServiceMock
+            .Setup(x => x.GetFileContentAsync(It.IsAny<string>()))
+            .ReturnsAsync(string.Empty);
+
+        ManifestServiceMock
+            .Setup(x => x.GetFileContentAsync(ValidBundleResult))
+            .ReturnsAsync(BundleContent);
+
+        if (ValidFallbackTestBundle != null)
+        {
+            ManifestServiceMock
+                .Setup(x => x.GetFileContentAsync(ValidFallbackTestBundle))
+                .ReturnsAsync(FallbackBundleContent);
         }
     }
 }

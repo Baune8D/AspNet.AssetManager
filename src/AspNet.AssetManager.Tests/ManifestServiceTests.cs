@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.IO.Abstractions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,9 @@ public sealed class ManifestServiceTests : IDisposable
                                                       }
                                                     }
                                                     """;
+
+    private const string Bundle = "Bundle.js";
+    private const string HttpClientResponse = "File content";
 
     private ManifestService? _manifestService;
 
@@ -185,5 +189,100 @@ public sealed class ManifestServiceTests : IDisposable
         fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), CancellationToken.None), Times.Once);
         fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetFileContent_Null_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        Func<Task> act = () => _manifestService.GetFileContentAsync(null!);
+
+        // Assert
+        await act.Should().ThrowExactlyAsync<ArgumentNullException>();
+        fileSystemMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetFileContent_DevelopmentNoHttpClient_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        Func<Task> act = () => _manifestService.GetFileContentAsync("InvalidBundle");
+
+        // Assert
+        await act.Should().ThrowExactlyAsync<ArgumentNullException>();
+        fileSystemMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetFileContent_Development_ShouldReturnStyleTag()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFileContentAsync(Bundle);
+        var result2 = await _manifestService.GetFileContentAsync(Bundle);
+
+        // Assert
+        result.Should().Contain(HttpClientResponse);
+        result2.Should().Contain(HttpClientResponse);
+        fileSystemMock.VerifyNoOtherCalls();
+        httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
+        httpClientFactoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetFileContent_DevelopmentQueryString_ShouldReturnStyleTag()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFileContentAsync($"{Bundle}?v=123");
+        var result2 = await _manifestService.GetFileContentAsync($"{Bundle}?v=123");
+
+        // Assert
+        result.Should().Contain(HttpClientResponse);
+        result2.Should().Contain(HttpClientResponse);
+        fileSystemMock.VerifyNoOtherCalls();
+        httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
+        httpClientFactoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task GetFileContent_Production_ShouldReturnStyleTag()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFileContentAsync(Bundle);
+        var result2 = await _manifestService.GetFileContentAsync(Bundle);
+
+        // Assert
+        result.Should().Contain(HttpClientResponse);
+        result2.Should().Contain(HttpClientResponse);
+        fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+        fileSystemMock.VerifyNoOtherCalls();
     }
 }

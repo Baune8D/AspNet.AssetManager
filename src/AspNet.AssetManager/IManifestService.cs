@@ -21,4 +21,14 @@ public interface IManifestService
     /// On completion, contains the asset filename or null if the bundle does not exist.
     /// </returns>
     Task<string?> GetFromManifestAsync(string bundle);
+
+    /// <summary>
+    /// Retrieves the content of a file, either from a file system or from a development server.
+    /// </summary>
+    /// <param name="file">The name of the file, including any query parameters.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation.
+    /// On completion, contains the content of the requested file as a string.
+    /// </returns>
+    Task<string> GetFileContentAsync(string file);
 }

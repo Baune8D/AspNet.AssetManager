@@ -5,39 +5,27 @@
 
 using System;
 using System.ComponentModel;
-using System.IO.Abstractions;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using AspNet.AssetManager.Tests.Data;
 using AwesomeAssertions;
-using Moq;
 using Xunit;
 
 namespace AspNet.AssetManager.Tests;
 
-public sealed class TagBuilderTests : IDisposable
+public sealed class TagBuilderTests
 {
     private const string Bundle = "Bundle.js";
-    private const string HttpClientResponse = "CSS content";
-
-    private readonly Mock<IFileSystem> _fileSystemMock = DependencyMocker.GetFileSystem(HttpClientResponse);
+    private const string StyleContent = "CSS content";
 
     private TagBuilder? _tagBuilder;
 
     private static string ValidBundleResult => $"{TestValues.AssetsWebPath}{Bundle}";
-
-    public void Dispose()
-    {
-        _tagBuilder?.Dispose();
-    }
 
     [Fact]
     public void BuildScriptTag_InvalidScriptLoad_ShouldThrowInvalidEnumArgumentException()
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         Action act = () => _tagBuilder.BuildScriptTag(Bundle, (ScriptLoad)6);
@@ -51,17 +39,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().Contain("crossorigin=\"anonymous\"")
             .And.NotContain("type=\"module\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -69,17 +57,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, ManifestType.Vite);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().Contain("crossorigin=\"anonymous\"")
             .And.Contain("type=\"module\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -87,17 +75,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Async);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().Contain("crossorigin=\"anonymous\"")
             .And.NotContain("type=\"module\"")
             .And.Contain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -105,17 +93,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Defer);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().Contain("crossorigin=\"anonymous\"")
             .And.NotContain("type=\"module\"")
             .And.Contain("defer")
             .And.NotContain("async");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -123,17 +111,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.AsyncDefer);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().Contain("crossorigin=\"anonymous\"")
             .And.NotContain("type=\"module\"")
             .And.Contain("async")
             .And.Contain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -141,16 +129,16 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().NotContain("crossorigin=\"anonymous\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -158,17 +146,17 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal);
 
         // Assert
+        VerifyScriptTag(result);
         result.Should().NotContain("crossorigin=\"anonymous\"")
             .And.NotContain("type=\"module\"")
             .And.NotContain("async")
             .And.NotContain("defer");
-        VerifyScriptTag(result);
     }
 
     [Fact]
@@ -176,14 +164,14 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildLinkTag(Bundle);
 
         // Assert
-        result.Should().Contain("crossorigin=\"anonymous\"");
         VerifyLinkTag(result);
+        result.Should().Contain("crossorigin=\"anonymous\"");
     }
 
     [Fact]
@@ -191,126 +179,63 @@ public sealed class TagBuilderTests : IDisposable
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
         var result = _tagBuilder.BuildLinkTag(Bundle);
 
         // Assert
-        result.Should().NotContain("crossorigin=\"anonymous\"");
         VerifyLinkTag(result);
+        result.Should().NotContain("crossorigin=\"anonymous\"");
     }
 
     [Fact]
-    public async Task BuildStyleTag_Null_ShouldThrowArgumentNullException()
+    public void BuildStyleTag_Development_ShouldReturnStyleTag()
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
-        Func<Task> act = () => _tagBuilder.BuildStyleTagAsync(null!);
-
-        // Assert
-        await act.Should().ThrowExactlyAsync<ArgumentNullException>();
-        assetConfigurationMock.VerifyNoOtherCalls();
-        _fileSystemMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task BuildStyleTag_DevelopmentNoHttpClient_ShouldThrowArgumentNullException()
-    {
-        // Arrange
-        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
-
-        // Act
-        Func<Task> act = () => _tagBuilder.BuildStyleTagAsync("InvalidBundle");
-
-        // Assert
-        await act.Should().ThrowExactlyAsync<ArgumentNullException>();
-        _fileSystemMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task BuildStyleTag_Development_ShouldReturnStyleTag()
-    {
-        // Arrange
-        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
-
-        // Act
-        var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
-        var result2 = await _tagBuilder.BuildStyleTagAsync(Bundle);
+        var result = _tagBuilder.BuildStyleTag(StyleContent);
 
         // Assert
         VerifyStyleTag(result);
-        VerifyStyleTag(result2);
-        _fileSystemMock.VerifyNoOtherCalls();
-        httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
-        httpClientFactoryMock.VerifyNoOtherCalls();
     }
 
     [Fact]
-    public async Task BuildStyleTag_DevelopmentQueryString_ShouldReturnStyleTag()
-    {
-        // Arrange
-        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development);
-        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientResponse);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object, httpClientFactoryMock.Object);
-
-        // Act
-        var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
-        var result2 = await _tagBuilder.BuildStyleTagAsync(Bundle);
-
-        // Assert
-        VerifyStyleTag(result);
-        VerifyStyleTag(result2);
-        _fileSystemMock.VerifyNoOtherCalls();
-        httpClientFactoryMock.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once);
-        httpClientFactoryMock.VerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public async Task BuildStyleTag_Production_ShouldReturnStyleTag()
+    public void BuildStyleTag_Production_ShouldReturnStyleTag()
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
-        _tagBuilder = new TagBuilder(assetConfigurationMock.Object, _fileSystemMock.Object);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
 
         // Act
-        var result = await _tagBuilder.BuildStyleTagAsync(Bundle);
-        var result2 = await _tagBuilder.BuildStyleTagAsync(Bundle);
+        var result = _tagBuilder.BuildStyleTag(StyleContent);
 
         // Assert
         VerifyStyleTag(result);
-        VerifyStyleTag(result2);
-        _fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
-        _fileSystemMock.VerifyNoOtherCalls();
     }
 
     private static void VerifyStyleTag(string result)
     {
-        result.Should().Contain(HttpClientResponse)
-            .And.StartWith("<style>")
-            .And.EndWith("</style>");
+        result.Should().StartWith("<style>")
+            .And.EndWith("</style>")
+            .And.Contain(StyleContent);
     }
 
-    private void VerifyScriptTag(string result)
+    private static void VerifyScriptTag(string result)
     {
         result.Should().StartWith("<script ")
             .And.EndWith("</script>")
             .And.Contain($"src=\"{ValidBundleResult}\"");
-        _fileSystemMock.VerifyNoOtherCalls();
     }
 
-    private void VerifyLinkTag(string result)
+    private static void VerifyLinkTag(string result)
     {
         result.Should().StartWith("<link ")
             .And.EndWith(" />")
             .And.Contain($"href=\"{ValidBundleResult}\"")
             .And.Contain("rel=\"stylesheet\"");
-        _fileSystemMock.VerifyNoOtherCalls();
     }
 }

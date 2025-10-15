@@ -17,14 +17,14 @@ namespace AspNet.AssetManager;
 internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem)
     : IManifestService, IDisposable
 {
-    private readonly IAssetConfiguration _assetConfiguration = assetConfiguration;
+    private readonly Dictionary<string, string> _fileContents = new();
 
     private JsonDocument? _manifest;
 
     public ManifestService(IAssetConfiguration assetConfiguration, IFileSystem fileSystem, IHttpClientFactory httpClientFactory)
         : this(assetConfiguration, fileSystem)
     {
-        if (_assetConfiguration.DevelopmentMode)
+        if (assetConfiguration.DevelopmentMode)
         {
             HttpClient = httpClientFactory.CreateClient();
         }
@@ -46,12 +46,12 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
 
         if (_manifest == null)
         {
-            var json = _assetConfiguration.DevelopmentMode
-                ? await FetchDevelopmentManifestAsync(HttpClient, _assetConfiguration.ManifestPath).ConfigureAwait(false)
-                : await fileSystem.File.ReadAllTextAsync(_assetConfiguration.ManifestPath).ConfigureAwait(false);
+            var json = assetConfiguration.DevelopmentMode
+                ? await FetchDevelopmentManifestAsync(HttpClient, assetConfiguration.ManifestPath).ConfigureAwait(false)
+                : await fileSystem.File.ReadAllTextAsync(assetConfiguration.ManifestPath).ConfigureAwait(false);
 
             manifest = JsonDocument.Parse(json);
-            if (!_assetConfiguration.DevelopmentMode)
+            if (!assetConfiguration.DevelopmentMode)
             {
                 _manifest = manifest;
             }
@@ -61,12 +61,42 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
             manifest = _manifest;
         }
 
-        if (_assetConfiguration.ManifestType == ManifestType.Vite)
+        if (assetConfiguration.ManifestType == ManifestType.Vite)
         {
             return GetFromViteManifest(manifest, bundle);
         }
 
         return GetFromKeyValueManifest(manifest, bundle);
+    }
+
+    public async Task<string> GetFileContentAsync(string file)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        if (!assetConfiguration.DevelopmentMode && _fileContents.TryGetValue(file, out var cached))
+        {
+            return cached;
+        }
+
+        var filename = file;
+        var queryIndex = filename.IndexOf('?', StringComparison.Ordinal);
+        if (queryIndex != -1)
+        {
+            filename = filename[..queryIndex];
+        }
+
+        var fullPath = $"{assetConfiguration.AssetsDirectoryPath}{filename}";
+
+        var content = assetConfiguration.DevelopmentMode
+            ? await FetchDevelopmentFileContentAsync(HttpClient, fullPath).ConfigureAwait(false)
+            : await fileSystem.File.ReadAllTextAsync(fullPath).ConfigureAwait(false);
+
+        if (!assetConfiguration.DevelopmentMode)
+        {
+            _fileContents.Add(file, content);
+        }
+
+        return content;
     }
 
     private static string? GetFromKeyValueManifest(JsonDocument manifest, string bundle)
@@ -97,7 +127,7 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
 
             if (!bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
             {
-                return _assetConfiguration.DevelopmentMode
+                return assetConfiguration.DevelopmentMode
                     ? entry.GetProperty("src").GetString()
                     : entry.GetProperty("file").GetString();
             }
@@ -130,5 +160,15 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
         {
             throw new InvalidOperationException("Development server not started!");
         }
+    }
+
+    private static async Task<string> FetchDevelopmentFileContentAsync(HttpClient? httpClient, string fullPath)
+    {
+        if (httpClient == null)
+        {
+            throw new ArgumentNullException(nameof(httpClient), "HttpClient only available in development mode.");
+        }
+
+        return await httpClient.GetStringAsync(new Uri(fullPath)).ConfigureAwait(false);
     }
 }
