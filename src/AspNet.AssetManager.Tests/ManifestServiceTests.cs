@@ -90,7 +90,7 @@ public sealed class ManifestServiceTests : IDisposable
 
         // Assert
         await act.Should()
-            .ThrowExactlyAsync<InvalidOperationException>()
+            .ThrowExactlyAsync<DevServerException>()
             .WithMessage("Development server not started!");
         fileSystemMock.VerifyNoOtherCalls();
     }

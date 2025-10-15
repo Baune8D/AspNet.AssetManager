@@ -158,7 +158,7 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
         }
         catch (HttpRequestException)
         {
-            throw new InvalidOperationException("Development server not started!");
+            throw new DevServerException();
         }
     }
 
