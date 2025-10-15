@@ -1,4 +1,4 @@
-// <copyright file="AssetServiceBaseFixture.cs" company="Baune8D">
+// <copyright file="AssetServiceFixture.cs" company="Baune8D">
 // Copyright (c) Baune8D. All rights reserved.
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
@@ -8,7 +8,7 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-internal abstract class AssetServiceBaseFixture
+internal abstract class AssetServiceFixture
 {
     public const string ValidBundleWithoutExtension = "Bundle";
 
@@ -16,7 +16,7 @@ internal abstract class AssetServiceBaseFixture
 
     public const string InvalidBundle = "InvalidBundle";
 
-    protected AssetServiceBaseFixture(string validTestBundle, string? validFallbackTestBundle = null)
+    protected AssetServiceFixture(string validTestBundle, string? validFallbackTestBundle = null)
     {
         ValidTestBundle = validTestBundle;
         ValidFallbackTestBundle = validFallbackTestBundle;

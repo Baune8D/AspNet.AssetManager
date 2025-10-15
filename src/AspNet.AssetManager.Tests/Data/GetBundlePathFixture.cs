@@ -9,7 +9,7 @@ using AwesomeAssertions;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-internal sealed class GetBundlePathFixture : AssetServiceBaseFixture
+internal sealed class GetBundlePathFixture : AssetServiceFixture
 {
     public const string ValidBundleWithExtension = $"{ValidBundleWithoutExtension}.js";
 

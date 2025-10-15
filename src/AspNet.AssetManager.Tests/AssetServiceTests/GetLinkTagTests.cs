@@ -28,7 +28,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_InvalidBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetLinkTagAsync();
@@ -41,7 +41,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_ValidBundle_ShouldReturnLinkTag()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.ValidBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetLinkTagAsync();
@@ -67,7 +67,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_FallbackEmptyString_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.InvalidBundle, string.Empty);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.InvalidBundle, string.Empty);
 
         // Act
         var result = await fixture.GetLinkTagAsync();
@@ -80,7 +80,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_InvalidFallbackBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetLinkTagAsync();
@@ -93,7 +93,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_ValidFallbackBundle_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.ValidFallbackBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetLinkTagAsync();
@@ -106,7 +106,7 @@ public sealed class GetLinkTagTests
     public async Task GetLinkTag_ValidFallbackBundleWithExtension_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetLinkTagFixture(AssetServiceBaseFixture.InvalidBundle, GetLinkTagFixture.ValidFallbackBundleWithExtension);
+        var fixture = new GetLinkTagFixture(AssetServiceFixture.InvalidBundle, GetLinkTagFixture.ValidFallbackBundleWithExtension);
 
         // Act
         var result = await fixture.GetLinkTagAsync();

@@ -28,7 +28,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_InvalidBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -41,7 +41,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidBundle_ShouldReturnScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -67,7 +67,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidBundleAsync_ShouldReturnAsyncScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, ScriptLoad.Async);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension, ScriptLoad.Async);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -80,7 +80,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidBundleDefer_ShouldReturnDeferScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, ScriptLoad.Defer);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension, ScriptLoad.Defer);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -93,7 +93,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidBundleAsyncDefer_ShouldReturnAsyncDeferScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, ScriptLoad.AsyncDefer);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension, ScriptLoad.AsyncDefer);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -106,7 +106,7 @@ public sealed class GetScriptTagTests
     public async Task GetLinkTag_FallbackEmptyString_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle, string.Empty);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle, string.Empty);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -119,7 +119,7 @@ public sealed class GetScriptTagTests
     public async Task GetLinkTag_InvalidFallbackBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -132,7 +132,7 @@ public sealed class GetScriptTagTests
     public async Task GetLinkTag_ValidFallbackBundle_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.ValidFallbackBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -145,7 +145,7 @@ public sealed class GetScriptTagTests
     public async Task GetLinkTag_ValidFallbackBundleWithExtension_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle, GetScriptTagFixture.ValidFallbackBundleWithExtension);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle, GetScriptTagFixture.ValidFallbackBundleWithExtension);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -158,7 +158,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidFallbackBundleAsync_ShouldReturnAsyncScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.Async);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.Async);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -171,7 +171,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidFallbackBundleDefer_ShouldReturnDeferScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.Defer);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension, AssetServiceFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.Defer);
 
         // Act
         var result = await fixture.GetScriptTagAsync();
@@ -184,7 +184,7 @@ public sealed class GetScriptTagTests
     public async Task GetScriptTag_ValidFallbackBundleAsyncDefer_ShouldReturnAsyncDeferScriptTag()
     {
         // Arrange
-        var fixture = new GetScriptTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.AsyncDefer);
+        var fixture = new GetScriptTagFixture(AssetServiceFixture.ValidBundleWithoutExtension, AssetServiceFixture.ValidFallbackBundleWithoutExtension, ScriptLoad.AsyncDefer);
 
         // Act
         var result = await fixture.GetScriptTagAsync();

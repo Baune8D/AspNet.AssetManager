@@ -30,7 +30,7 @@ public sealed class GetBundlePathTests
     public async Task GetBundlePath_ValidBundleWithoutExtension_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var fixture = new GetBundlePathFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension);
+        var fixture = new GetBundlePathFixture(AssetServiceFixture.ValidBundleWithoutExtension);
 
         // Act
         Func<Task> act = () => fixture.GetBundlePathAsync();
@@ -86,7 +86,7 @@ public sealed class GetBundlePathTests
     public async Task GetBundlePath_InvalidBundleWithExtensionAsParam_ShouldReturnNull()
     {
         // Arrange
-        var fixture = new GetBundlePathFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, FileType.CSS);
+        var fixture = new GetBundlePathFixture(AssetServiceFixture.ValidBundleWithoutExtension, FileType.CSS);
 
         // Act
         var result = await fixture.GetBundlePathAsync();
@@ -99,7 +99,7 @@ public sealed class GetBundlePathTests
     public async Task GetBundlePath_ValidBundleWithExtensionAsParam_ShouldReturnBundlePath()
     {
         // Arrange
-        var fixture = new GetBundlePathFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension, FileType.JS);
+        var fixture = new GetBundlePathFixture(AssetServiceFixture.ValidBundleWithoutExtension, FileType.JS);
 
         // Act
         var result = await fixture.GetBundlePathAsync();

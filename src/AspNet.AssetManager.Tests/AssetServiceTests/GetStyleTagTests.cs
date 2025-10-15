@@ -28,7 +28,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_InvalidBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetStyleTagAsync();
@@ -41,7 +41,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_ValidBundle_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.ValidBundleWithoutExtension);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.ValidBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetStyleTagAsync();
@@ -67,7 +67,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_FallbackEmptyString_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.InvalidBundle, string.Empty);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.InvalidBundle, string.Empty);
 
         // Act
         var result = await fixture.GetStyleTagAsync();
@@ -80,7 +80,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_InvalidFallbackBundle_ShouldReturnEmptyHtmlString()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.InvalidBundle);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.InvalidBundle);
 
         // Act
         var result = await fixture.GetStyleTagAsync();
@@ -93,7 +93,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_ValidFallbackBundle_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.InvalidBundle, AssetServiceBaseFixture.ValidFallbackBundleWithoutExtension);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.InvalidBundle, AssetServiceFixture.ValidFallbackBundleWithoutExtension);
 
         // Act
         var result = await fixture.GetStyleTagAsync();
@@ -106,7 +106,7 @@ public sealed class GetStyleTagTests
     public async Task GetStyleTag_ValidFallbackBundleWithExtension_ShouldReturnStyleTag()
     {
         // Arrange
-        var fixture = new GetStyleTagFixture(AssetServiceBaseFixture.InvalidBundle, GetStyleTagFixture.ValidFallbackBundleWithExtension);
+        var fixture = new GetStyleTagFixture(AssetServiceFixture.InvalidBundle, GetStyleTagFixture.ValidFallbackBundleWithExtension);
 
         // Act
         var result = await fixture.GetStyleTagAsync();

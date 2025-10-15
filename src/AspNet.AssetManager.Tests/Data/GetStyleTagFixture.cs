@@ -10,7 +10,7 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-internal sealed class GetStyleTagFixture : AssetServiceBaseFixture
+internal sealed class GetStyleTagFixture : AssetServiceFixture
 {
     public const string ValidBundleWithExtension = $"{ValidBundleWithoutExtension}.css";
 
@@ -92,12 +92,12 @@ internal sealed class GetStyleTagFixture : AssetServiceBaseFixture
     private void SetupBuildStyleTag(string resultBundle, string returnValue)
     {
         TagBuilderMock
-            .Setup(x => x.BuildStyleTagAsync(resultBundle))
-            .ReturnsAsync(returnValue);
+            .Setup(x => x.BuildStyleTag(resultBundle))
+            .Returns(returnValue);
     }
 
     private void VerifyBuildStyleTag(string resultBundle)
     {
-        TagBuilderMock.Verify(x => x.BuildStyleTagAsync(resultBundle), Times.Once());
+        TagBuilderMock.Verify(x => x.BuildStyleTag(resultBundle), Times.Once());
     }
 }

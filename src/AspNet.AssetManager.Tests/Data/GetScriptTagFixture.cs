@@ -10,7 +10,7 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-internal sealed class GetScriptTagFixture : AssetServiceBaseFixture
+internal sealed class GetScriptTagFixture : AssetServiceFixture
 {
     public const string ValidFallbackBundleWithExtension = $"{ValidFallbackBundleWithoutExtension}.js";
 

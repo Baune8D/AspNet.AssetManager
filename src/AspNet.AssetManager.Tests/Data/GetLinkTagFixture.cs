@@ -10,7 +10,7 @@ using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
 
-internal sealed class GetLinkTagFixture : AssetServiceBaseFixture
+internal sealed class GetLinkTagFixture : AssetServiceFixture
 {
     public const string ValidBundleWithExtension = $"{ValidBundleWithoutExtension}.css";
 
