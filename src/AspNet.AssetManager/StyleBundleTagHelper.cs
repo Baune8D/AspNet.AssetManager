@@ -57,9 +57,15 @@ public class StyleBundleTagHelper(IHtmlHelper htmlHelper, IAssetService assetSer
         output.TagName = "style";
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
+        var bundle = Name ?? ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
         var content = await assetService.GetStyleContent(bundle, Fallback).ConfigureAwait(false);
 
-        output.Content.SetHtmlContent(content ?? string.Empty);
+        if (string.IsNullOrEmpty(content))
+        {
+            output.SuppressOutput();
+            return;
+        }
+
+        output.Content.SetHtmlContent(content);
     }
 }

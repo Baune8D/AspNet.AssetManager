@@ -61,8 +61,14 @@ public class LinkBundleTagHelper(
         output.TagName = "link";
         output.TagMode = TagMode.SelfClosing;
 
-        var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
+        var bundle = Name ?? ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
         var file = await assetService.GetLinkHref(bundle, Fallback).ConfigureAwait(false);
+
+        if (file is null)
+        {
+            output.SuppressOutput();
+            return;
+        }
 
         output.Attributes.SetAttribute("href", $"{assetConfiguration.AssetsWebPath}{file}");
 

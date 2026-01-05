@@ -76,8 +76,14 @@ public class ScriptBundleTagHelper(
         output.TagName = "script";
         output.TagMode = TagMode.StartTagAndEndTag;
 
-        var bundle = Name ?? (ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName());
+        var bundle = Name ?? ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
         var file = await assetService.GetScriptSrc(bundle, Fallback).ConfigureAwait(false);
+
+        if (file is null)
+        {
+            output.SuppressOutput();
+            return;
+        }
 
         output.Attributes.SetAttribute("src", $"{assetConfiguration.AssetsWebPath}{file}");
 
