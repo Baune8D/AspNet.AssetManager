@@ -11,7 +11,6 @@ ProjectSection(SolutionItems) = preProject
 	LICENSE = LICENSE
 	README.md = README.md
 	stylecop.json = stylecop.json
-	appveyor.yml = appveyor.yml
 	GitVersion.yml = GitVersion.yml
 	.globalconfig = .globalconfig
 	Directory.Packages.props = Directory.Packages.props
@@ -31,6 +30,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{36E9EBAD-C5AE-48CF-84C7-C807A86D6A4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.AssetManager.Demo", "src\AspNet.AssetManager.Demo\AspNet.AssetManager.Demo.csproj", "{3AF16234-2BDA-4183-93B4-D86800CACFF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D2D8943C-6CC6-440C-AA10-BFEC00654B25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EDCF630A-DBB9-416E-9781-B43C15FA2F0A}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\pipeline.yml = .github\workflows\pipeline.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,5 +64,7 @@ Global
 		{4B8FE48A-39E8-4694-8F7E-A630C4E463DE} = {E9E6789A-7758-489A-B813-ED19F261E4DB}
 		{ED2ECA36-8457-44C9-A93B-84CC02976D7D} = {E9E6789A-7758-489A-B813-ED19F261E4DB}
 		{3AF16234-2BDA-4183-93B4-D86800CACFF2} = {E9E6789A-7758-489A-B813-ED19F261E4DB}
+		{D2D8943C-6CC6-440C-AA10-BFEC00654B25} = {0733DE44-1329-45E8-9473-4039F9F558D4}
+		{EDCF630A-DBB9-416E-9781-B43C15FA2F0A} = {D2D8943C-6CC6-440C-AA10-BFEC00654B25}
 	EndGlobalSection
 EndGlobal

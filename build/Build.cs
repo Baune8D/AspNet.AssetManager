@@ -1,39 +1,24 @@
-using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.CI.AppVeyor;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Codecov;
 using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.GitVersion;
-using Nuke.Common.Tools.NuGet;
 using Nuke.Common.Tools.ReportGenerator;
+using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.Tools.Codecov.CodecovTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
-using static Nuke.Common.Tools.NuGet.NuGetTasks;
 using static Nuke.Common.Tools.ReportGenerator.ReportGeneratorTasks;
 
-// ReSharper disable AllUnderscoreLocalParameterName
-
-[ShutdownDotNetAfterServerBuild]
-[AppVeyor(
-    AppVeyorImage.VisualStudio2022,
-    InvokedTargets =
-    [
-        nameof(UploadCodecov),
-        nameof(PushNuGet),
-        nameof(PushMyGet),
-    ])]
-[AppVeyorSecret("MYGET_API_KEY", "78qy8e6pKfJlQV7RAG5tJOWegzXpjASkUs3aFdVBoPYA5gi6+mWdjbuAmNa5OQPe")]
-[AppVeyorSecret("NUGET_API_KEY", "3/MQhuau0GaMNBeyultrJ7QEv6EGUus4j6XBXZJePtugz/kL8Ih9RMyMIlrOAqkN")]
-[AppVeyorSecret("CODECOV_TOKEN", "3FxtGPNTgZyQGToJBaH68/oIjptV79CcViR9mHt2aOKGh3++oKTehBIuPSb7oYCE")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 class Build : NukeBuild
 {
     public static int Main () => Execute<Build>(x => x.Compile);
@@ -48,7 +33,7 @@ class Build : NukeBuild
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
     [GitVersion] readonly GitVersion GitVersion;
-    [CI] readonly AppVeyor AppVeyor;
+    [CI] readonly GitHubActions GitHubActions;
 
     static AbsolutePath SourceDirectory => RootDirectory / "src";
     static AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
@@ -59,19 +44,27 @@ class Build : NukeBuild
 
     static IEnumerable<AbsolutePath> Artifacts => ArtifactsDirectory.GlobFiles("*.nupkg");
 
-    // ReSharper disable once UnusedMember.Local
     Target Clean => _ => _
         .Before(Compile)
         .Executes(() =>
         {
+            ArtifactsDirectory.CreateOrCleanDirectory();
+
             SourceDirectory
                 .GlobDirectories("**/bin", "**/obj")
                 .ForEach(path => path.DeleteDirectory());
+        });
 
-            ArtifactsDirectory.CreateOrCleanDirectory();
+    Target Restore => _ => _
+        .Executes(() =>
+        {
+            DotNetRestore(s => s
+                .SetProjectFile(Solution)
+                .EnableLockedMode());
         });
 
     Target Compile => _ => _
+        .DependsOn(Restore)
         .Executes(() =>
         {
             DotNetBuild(s => s
@@ -80,7 +73,8 @@ class Build : NukeBuild
                 .SetAssemblyVersion(GitVersion.AssemblySemVer)
                 .SetFileVersion(GitVersion.AssemblySemFileVer)
                 .SetInformationalVersion(GitVersion.InformationalVersion)
-                .EnableTreatWarningsAsErrors());
+                .EnableTreatWarningsAsErrors()
+                .EnableNoRestore());
         });
 
     Target Test => _ => _
@@ -90,15 +84,18 @@ class Build : NukeBuild
             CoverageDirectory.CreateOrCleanDirectory();
             TestResultFolders.ForEach(directory => directory.DeleteDirectory());
 
-            DotNetTest(s => s
-                .SetConfiguration(Configuration)
-                .EnableNoRestore()
-                .EnableNoBuild()
-                .SetDataCollector("XPlat Code Coverage")
-                .SetCoverletOutputFormat(CoverletOutputFormat.cobertura)
-                .CombineWith(TestProjects, (ss, project) => ss
-                    .SetProjectFile(project)),
-                degreeOfParallelism: Environment.ProcessorCount);
+            foreach (var project in TestProjects)
+            {
+                DotNetTest(s => s
+                    .SetProjectFile(project)
+                    .SetConfiguration(Configuration)
+                    .SetDataCollector("XPlat Code Coverage")
+                    .SetCoverletOutputFormat(CoverletOutputFormat.cobertura)
+                    .EnableNoRestore()
+                    .EnableNoBuild()
+                    .When(GitHubActions != null, ss => ss
+                        .SetLoggers("GitHubActions")));
+            }
 
             ReportGenerator(s => s
                 .SetReports(CoverageResults)
@@ -122,10 +119,10 @@ class Build : NukeBuild
 
             DotNetPack(s => s
                 .SetConfiguration(Configuration)
-                .EnableNoRestore()
-                .EnableNoBuild()
                 .SetOutputDirectory(ArtifactsDirectory)
-                .SetVersion(GitVersion.SemVer));
+                .SetVersion(GitVersion.SemVer)
+                .EnableNoRestore()
+                .EnableNoBuild());
         });
 
     Target PushMyGet => _ => _
@@ -133,25 +130,27 @@ class Build : NukeBuild
         .OnlyWhenStatic(() => IsServerBuild && GitRepository.IsOnMainBranch())
         .Executes(() =>
         {
-            NuGetPush(s => s
-                .SetSource("https://www.myget.org/F/baunegaard/api/v2/package")
-                .SetApiKey(MyGetApiKey)
-                .CombineWith(Artifacts, (ss, artifact) => ss
-                    .SetTargetPath(artifact)),
-                degreeOfParallelism: Environment.ProcessorCount);
+            foreach (var artifact in Artifacts)
+            {
+                DotNetNuGetPush(s => s
+                    .SetTargetPath(artifact)
+                    .SetSource("https://www.myget.org/F/baunegaard/api/v2/package")
+                    .SetApiKey(MyGetApiKey));
+            }
         });
 
     Target PushNuGet => _ => _
         .DependsOn(Package)
-        .OnlyWhenStatic(() => IsServerBuild && AppVeyor.RepositoryTag)
+        .OnlyWhenStatic(() => IsServerBuild && GitHubActions.RefType == "tag")
         .Executes(() =>
         {
-            NuGetPush(s => s
-                .SetSource("https://api.nuget.org/v3/index.json")
-                .SetApiKey(NuGetApiKey)
-                .CombineWith(Artifacts, (ss, artifact) => ss
-                    .SetTargetPath(artifact)),
-                degreeOfParallelism: Environment.ProcessorCount);
+            foreach (var artifact in Artifacts)
+            {
+                DotNetNuGetPush(s => s
+                    .SetTargetPath(artifact)
+                    .SetSource("https://api.nuget.org/v3/index.json")
+                    .SetApiKey(NuGetApiKey));
+            }
         });
 
     Target UploadCodecov => _ => _
