@@ -142,7 +142,7 @@ public sealed class TagBuilderTests
     }
 
     [Fact]
-    public void BuildScriptTag_ProductionVite_ShouldReturnScriptTag()
+    public void BuildScriptTag_ProductionVite_ShouldReturnModuleScriptTag()
     {
         // Arrange
         var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
@@ -154,9 +154,55 @@ public sealed class TagBuilderTests
         // Assert
         VerifyScriptTag(result);
         result.Should().NotContain("crossorigin=\"anonymous\"")
-            .And.NotContain("type=\"module\"")
+            .And.Contain("type=\"module\"")
             .And.NotContain("async")
             .And.NotContain("defer");
+    }
+
+    [Fact]
+    public void BuildScriptTag_ProductionViteModuleFalse_ShouldOmitTypeModule()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal, module: false);
+
+        // Assert
+        VerifyScriptTag(result);
+        result.Should().NotContain("type=\"module\"");
+    }
+
+    [Fact]
+    public void BuildScriptTag_ProductionModuleTrue_ShouldIncludeTypeModule()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal, module: true);
+
+        // Assert
+        VerifyScriptTag(result);
+        result.Should().Contain("type=\"module\"");
+    }
+
+    [Fact]
+    public void BuildScriptTag_DevelopmentViteModuleFalse_ShouldOmitTypeModule()
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Development, ManifestType.Vite);
+        _tagBuilder = new TagBuilder(assetConfigurationMock.Object);
+
+        // Act
+        var result = _tagBuilder.BuildScriptTag(Bundle, ScriptLoad.Normal, module: false);
+
+        // Assert
+        VerifyScriptTag(result);
+        result.Should().Contain("crossorigin=\"anonymous\"")
+            .And.NotContain("type=\"module\"");
     }
 
     [Fact]

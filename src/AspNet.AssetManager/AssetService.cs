@@ -71,17 +71,17 @@ internal sealed class AssetService : IAssetService
                ?? await GetJsBundleName(fallback).ConfigureAwait(false);
     }
 
-    public async Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal)
+    public async Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal, bool? module = null)
     {
-        return await GetScriptTagAsync(bundle, null, load).ConfigureAwait(false);
+        return await GetScriptTagAsync(bundle, null, load, module).ConfigureAwait(false);
     }
 
-    public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal)
+    public async Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal, bool? module = null)
     {
         var file = await GetScriptSrc(bundle, fallback).ConfigureAwait(false);
 
         return file != null
-            ? new HtmlString(_tagBuilder.BuildScriptTag(file, load))
+            ? new HtmlString(_tagBuilder.BuildScriptTag(file, load, module))
             : HtmlString.Empty;
     }
 

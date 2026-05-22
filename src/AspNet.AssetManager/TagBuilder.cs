@@ -10,17 +10,17 @@ namespace AspNet.AssetManager;
 
 internal sealed class TagBuilder(IAssetConfiguration assetConfiguration) : ITagBuilder
 {
-    public string BuildScriptTag(string file, ScriptLoad load)
+    public string BuildScriptTag(string file, ScriptLoad load, bool? module = null)
     {
         var attributes = new List<string>();
 
+        if (module ?? assetConfiguration.ManifestType == ManifestType.Vite)
+        {
+            attributes.Add("type=\"module\"");
+        }
+
         if (assetConfiguration.DevelopmentMode)
         {
-            if (assetConfiguration.ManifestType == ManifestType.Vite)
-            {
-                attributes.Add("type=\"module\"");
-            }
-
             attributes.Add("crossorigin=\"anonymous\"");
         }
 
