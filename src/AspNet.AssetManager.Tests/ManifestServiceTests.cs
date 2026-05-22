@@ -45,6 +45,25 @@ public sealed class ManifestServiceTests : IDisposable
                                                     }
                                                     """;
 
+    // Vite emits standalone CSS chunks as root-level entries without a "name" property.
+    // The bundle we look up appears AFTER the nameless entry to ensure the loop iterates past it.
+    private const string HttpClientViteResponseWithNamelessCss = $$"""
+                                                    {
+                                                      "_Layout-abc123.css": {
+                                                        "file": "_Layout-abc123.css",
+                                                        "src": "_Layout-abc123.css"
+                                                      },
+                                                      "Assets/{{TestValues.JsonBundleJs}}": {
+                                                        "file": "{{TestValues.JsonResultBundleJs}}",
+                                                        "name": "{{TestValues.JsonBundleName}}",
+                                                        "src": "{{TestValues.JsonSrcBundleJs}}",
+                                                        "css": [
+                                                          "{{TestValues.JsonResultBundleCss}}"
+                                                        ]
+                                                      }
+                                                    }
+                                                    """;
+
     private const string Bundle = "Bundle.js";
     private const string HttpClientResponse = "File content";
 
@@ -188,6 +207,25 @@ public sealed class ManifestServiceTests : IDisposable
         fileSystemMock.Verify(x => x.File.ReadAllTextAsync(It.IsAny<string>(), CancellationToken.None), Times.Once);
         fileSystemMock.VerifyNoOtherCalls();
         httpClientFactoryMock.VerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData(TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
+    [InlineData("InvalidBundle.js", null)]
+    public async Task GetFromManifest_ProductionViteManifestWithNamelessEntry_ShouldNotThrow(string bundle, string? resultBundle)
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, HttpClientViteResponseWithNamelessCss, true);
+        var fileSystemMock = DependencyMocker.GetFileSystem(HttpClientViteResponseWithNamelessCss);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFromManifestAsync(bundle);
+
+        // Assert
+        result.Should().Be(resultBundle);
     }
 
     [Fact]
