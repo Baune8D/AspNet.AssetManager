@@ -118,9 +118,13 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
         foreach (var property in manifest.RootElement.EnumerateObject())
         {
             var entry = property.Value;
-            var name = entry.GetProperty("name").GetString();
 
-            if (name != nameToFind)
+            if (!entry.TryGetProperty("name", out var nameProperty))
+            {
+                continue;
+            }
+
+            if (nameProperty.GetString() != nameToFind)
             {
                 continue;
             }
