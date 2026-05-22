@@ -1,5 +1,4 @@
 # AspNet.AssetManager
-[![Build status](https://ci.appveyor.com/api/projects/status/u369u4wt45hsw53f?svg=true)](https://ci.appveyor.com/project/Baune8D/aspnet-assetmanager)
 [![codecov](https://codecov.io/gh/Baune8D/AspNet.AssetManager/branch/main/graph/badge.svg?token=M4KiXgJBnw)](https://codecov.io/gh/Baune8D/AspNet.AssetManager)
 ![NuGet Version](https://img.shields.io/nuget/v/AspNet.AssetManager)
 
