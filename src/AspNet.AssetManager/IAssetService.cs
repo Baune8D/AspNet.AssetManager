@@ -61,11 +61,17 @@ public interface IAssetService
     /// <param name="load">
     /// The loading behavior of the script tag (e.g., normal, async, defer). Defaults to normal.
     /// </param>
+    /// <param name="module">
+    /// Controls whether the generated script tag includes the <c>type="module"</c> attribute.
+    /// When <see langword="null"/> (the default), the value is inferred from the configured
+    /// <see cref="ManifestType"/>: Vite manifests default to <see langword="true"/>; other
+    /// manifest types default to <see langword="false"/>. Set explicitly to override.
+    /// </param>
     /// <returns>
     /// A task that represents the asynchronous operation.
     /// The task result contains an HtmlString with the generated script tag.
     /// </returns>
-    Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal);
+    Task<HtmlString> GetScriptTagAsync(string bundle, ScriptLoad load = ScriptLoad.Normal, bool? module = null);
 
     /// <summary>
     /// Generates an HTML script tag for the specified bundle, allowing customization of script loading behavior
@@ -80,11 +86,17 @@ public interface IAssetService
     /// Specifies the script loading behavior, such as normal, async, defer, or both async and defer.
     /// Defaults to the normal script loading behavior.
     /// </param>
+    /// <param name="module">
+    /// Controls whether the generated script tag includes the <c>type="module"</c> attribute.
+    /// When <see langword="null"/> (the default), the value is inferred from the configured
+    /// <see cref="ManifestType"/>: Vite manifests default to <see langword="true"/>; other
+    /// manifest types default to <see langword="false"/>. Set explicitly to override.
+    /// </param>
     /// <returns>
     /// A task that represents the asynchronous operation.
     /// The task result contains an HTML string representing the generated script tag.
     /// </returns>
-    Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal);
+    Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal, bool? module = null);
 
     /// <summary>
     /// Retrieves the hyperlink reference (href) for a specified CSS bundle,

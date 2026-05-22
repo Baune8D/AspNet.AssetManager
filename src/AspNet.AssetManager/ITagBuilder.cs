@@ -20,8 +20,14 @@ public interface ITagBuilder
     /// <param name="load">
     /// The script loading behavior, specifying how the script should be loaded (e.g., normal, async, defer).
     /// </param>
+    /// <param name="module">
+    /// Controls whether the generated script tag includes the <c>type="module"</c> attribute.
+    /// When <see langword="null"/> (the default), the value is inferred from the configured
+    /// <see cref="ManifestType"/>: Vite manifests default to <see langword="true"/>; other
+    /// manifest types default to <see langword="false"/>. Set explicitly to override.
+    /// </param>
     /// <returns>A string containing the HTML script tag with the specified configuration.</returns>
-    string BuildScriptTag(string file, ScriptLoad load);
+    string BuildScriptTag(string file, ScriptLoad load, bool? module = null);
 
     /// <summary>
     /// Builds an HTML link tag for including a CSS stylesheet in a web application.

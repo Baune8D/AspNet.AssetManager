@@ -107,12 +107,12 @@ internal sealed class GetScriptTagFixture : AssetServiceFixture
     private void SetupBuildScriptTag(string resultBundle, string returnValue)
     {
         TagBuilderMock
-            .Setup(x => x.BuildScriptTag(resultBundle, ScriptLoad))
+            .Setup(x => x.BuildScriptTag(resultBundle, ScriptLoad, null))
             .Returns(returnValue);
     }
 
     private void VerifyBuildScriptTag(string resultBundle)
     {
-        TagBuilderMock.Verify(x => x.BuildScriptTag(resultBundle, ScriptLoad), Times.Once());
+        TagBuilderMock.Verify(x => x.BuildScriptTag(resultBundle, ScriptLoad, null), Times.Once());
     }
 }

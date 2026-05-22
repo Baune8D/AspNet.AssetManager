@@ -54,6 +54,15 @@ public class ScriptBundleTagHelper(
     public bool Defer { get; set; }
 
     /// <summary>
+    /// Gets or sets a value controlling whether the generated script tag includes the
+    /// <c>type="module"</c> attribute. When <see langword="null"/> (the default), the value
+    /// is inferred from the configured <see cref="ManifestType"/>: Vite manifests default to
+    /// <see langword="true"/>; other manifest types default to <see langword="false"/>.
+    /// Set explicitly to override.
+    /// </summary>
+    public bool? Module { get; set; }
+
+    /// <summary>
     /// Processes the tag helper to generate a script tag for a JavaScript bundle.
     /// </summary>
     /// <param name="context">The context for the tag helper execution.</param>
@@ -87,13 +96,13 @@ public class ScriptBundleTagHelper(
 
         output.Attributes.SetAttribute("src", $"{assetConfiguration.AssetsWebPath}{file}");
 
+        if (Module ?? assetConfiguration.ManifestType == ManifestType.Vite)
+        {
+            output.Attributes.SetAttribute("type", "module");
+        }
+
         if (assetConfiguration.DevelopmentMode)
         {
-            if (assetConfiguration.ManifestType == ManifestType.Vite)
-            {
-                output.Attributes.SetAttribute("type", "module");
-            }
-
             output.Attributes.SetAttribute("crossorigin", "anonymous");
         }
 
