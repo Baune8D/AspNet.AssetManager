@@ -9,7 +9,7 @@ Asset manager for ASP.NET Core that enables use of modern frontend tooling.
 - Optional per-view overrides via `ViewData["Bundle"]`
 - Works with a dev server (e.g., `Vite`, `Webpack`) in development, and static files in production.
 
-See the template repository, for usage examples: [AspNet.Frontends](https://github.com/Baune8D/AspNet.Frontends)
+See the template repository, for usage examples: [AspNet.Frontend.Templates](https://github.com/Baune8D/AspNet.Frontend.Templates)
 
 ## Install
 
