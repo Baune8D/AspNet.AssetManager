@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 
@@ -99,18 +100,19 @@ public interface IAssetService
     Task<HtmlString> GetScriptTagAsync(string bundle, string? fallback, ScriptLoad load = ScriptLoad.Normal, bool? module = null);
 
     /// <summary>
-    /// Retrieves the hyperlink reference (href) for a specified CSS bundle,
-    /// optionally providing a fallback if the primary bundle does not exist.
+    /// Retrieves every CSS file (as web-relative paths) that belongs to the given bundle,
+    /// including styles contributed by transitively imported chunks (Vite). Falls back to
+    /// the <paramref name="fallback"/> bundle only when the primary bundle's closure is empty.
     /// </summary>
     /// <param name="bundle">The name of the primary CSS bundle to retrieve.</param>
     /// <param name="fallback">
-    /// The name of the fallback bundle to use if the primary bundle is not found. This parameter is optional.
+    /// The name of the fallback bundle to use if the primary bundle does not contribute any styles.
     /// </param>
     /// <returns>
-    /// A task that represents the asynchronous operation. The task result contains the href string
-    /// for the specified bundle if found; otherwise, null.
+    /// A task that represents the asynchronous operation. The task result contains the ordered,
+    /// de-duplicated list of CSS hrefs. An empty list means nothing should be rendered.
     /// </returns>
-    Task<string?> GetLinkHref(string bundle, string? fallback = null);
+    Task<IReadOnlyList<string>> GetLinkHrefs(string bundle, string? fallback = null);
 
     /// <summary>
     /// Generates an HTML link tag referencing the specified frontend bundle.

@@ -24,7 +24,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         Bundle = bundle;
         FallbackBundle = fallbackBundle;
-        SetupGetFromManifest();
+        SetupGetCssFromManifest();
         SetupBuildLinkTag(ValidBundleResult, LinkTag);
         SetupBuildLinkTag(ValidFallbackBundleResult, FallbackLinkTag);
     }
@@ -51,7 +51,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -59,7 +59,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         result.Should().BeEquivalentTo(new HtmlString(LinkTag));
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyBuildLinkTag(ValidBundleResult);
         VerifyNoOtherCalls();
     }
@@ -68,7 +68,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -76,7 +76,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -84,7 +84,7 @@ internal sealed class GetLinkTagFixture : AssetServiceFixture
     {
         result.Should().BeEquivalentTo(new HtmlString(FallbackLinkTag));
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyBuildLinkTag(ValidFallbackBundleResult);
         VerifyNoOtherCalls();
     }

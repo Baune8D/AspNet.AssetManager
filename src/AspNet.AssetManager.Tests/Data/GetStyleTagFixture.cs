@@ -24,7 +24,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         Bundle = bundle;
         FallbackBundle = fallbackBundle;
-        SetupGetFromManifest();
+        SetupGetCssFromManifest();
         SetupGetFileContent();
         SetupBuildStyleTag();
     }
@@ -51,7 +51,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -59,7 +59,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         result.Should().BeEquivalentTo(new HtmlString(StyleTag));
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyGetFileContent(ValidBundleWithExtension);
         VerifyBuildStyleTag(BundleContent);
         VerifyNoOtherCalls();
@@ -69,7 +69,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -77,7 +77,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         result.Should().Be(HtmlString.Empty);
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyNoOtherCalls();
     }
 
@@ -85,7 +85,7 @@ internal sealed class GetStyleTagFixture : AssetServiceFixture
     {
         result.Should().BeEquivalentTo(new HtmlString(FallbackStyleTag));
         VerifyDependencies();
-        VerifyGetFromManifest(Bundle, FallbackBundle, ".css");
+        VerifyGetCssFromManifest(Bundle, FallbackBundle, ".css");
         VerifyGetFileContent(ValidFallbackBundleWithExtension);
         VerifyBuildStyleTag(FallbackBundleContent);
         VerifyNoOtherCalls();
