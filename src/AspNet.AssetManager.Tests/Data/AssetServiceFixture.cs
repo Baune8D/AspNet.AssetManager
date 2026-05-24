@@ -4,6 +4,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using Moq;
 
 namespace AspNet.AssetManager.Tests.Data;
@@ -89,6 +90,40 @@ internal abstract class AssetServiceFixture
         }
     }
 
+    protected void VerifyGetCssFromManifest(string bundle, Times? times = null)
+    {
+        ManifestServiceMock.Verify(x => x.GetCssFromManifestAsync(bundle), times ?? Times.Once());
+    }
+
+    protected void VerifyGetCssFromManifest(string bundle, string? fallbackBundle, string extension)
+    {
+        ArgumentNullException.ThrowIfNull(bundle);
+
+        var bundleIsValid =
+            bundle == ValidBundleWithoutExtension ||
+            bundle == $"{ValidBundleWithoutExtension}{extension}";
+
+        if (bundle == fallbackBundle)
+        {
+            VerifyGetCssFromManifest(
+                bundle.EndsWith(extension, StringComparison.Ordinal) ? bundle : $"{bundle}{extension}",
+                bundleIsValid ? Times.Once() : Times.Exactly(2));
+        }
+        else
+        {
+            VerifyGetCssFromManifest(bundle.EndsWith(extension, StringComparison.Ordinal)
+                ? bundle
+                : $"{bundle}{extension}");
+
+            if (!string.IsNullOrEmpty(fallbackBundle) && !bundleIsValid)
+            {
+                VerifyGetCssFromManifest(fallbackBundle.EndsWith(extension, StringComparison.Ordinal)
+                    ? fallbackBundle
+                    : $"{fallbackBundle}{extension}");
+            }
+        }
+    }
+
     protected void VerifyGetFileContent(string file, Times? times = null)
     {
         ManifestServiceMock.Verify(x => x.GetFileContentAsync(file), times ?? Times.Once());
@@ -114,6 +149,24 @@ internal abstract class AssetServiceFixture
             ManifestServiceMock
                 .Setup(x => x.GetFromManifestAsync(ValidFallbackTestBundle))
                 .ReturnsAsync(ValidFallbackBundleResult);
+        }
+    }
+
+    protected void SetupGetCssFromManifest()
+    {
+        ManifestServiceMock
+            .Setup(x => x.GetCssFromManifestAsync(It.IsAny<string>()))
+            .ReturnsAsync((IReadOnlyList<string>)[]);
+
+        ManifestServiceMock
+            .Setup(x => x.GetCssFromManifestAsync(ValidTestBundle))
+            .ReturnsAsync([ValidBundleResult]);
+
+        if (ValidFallbackTestBundle != null)
+        {
+            ManifestServiceMock
+                .Setup(x => x.GetCssFromManifestAsync(ValidFallbackTestBundle))
+                .ReturnsAsync([ValidFallbackBundleResult]);
         }
     }
 

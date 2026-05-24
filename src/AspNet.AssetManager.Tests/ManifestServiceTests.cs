@@ -140,7 +140,6 @@ public sealed class ManifestServiceTests : IDisposable
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleJs, TestValues.JsonSrcBundleJs)]
-    [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleCss, null)]
     public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string? resultBundle)
     {
         // Arrange
@@ -188,7 +187,6 @@ public sealed class ManifestServiceTests : IDisposable
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
-    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     public async Task GetFromManifest_ProductionValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
     {
         // Arrange
@@ -211,7 +209,6 @@ public sealed class ManifestServiceTests : IDisposable
 
     [Theory]
     [InlineData(TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
-    [InlineData(TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     [InlineData("InvalidBundle.js", null)]
     public async Task GetFromManifest_ProductionViteManifestWithNamelessEntry_ShouldNotThrow(string bundle, string? resultBundle)
     {
@@ -226,6 +223,173 @@ public sealed class ManifestServiceTests : IDisposable
 
         // Assert
         result.Should().Be(resultBundle);
+    }
+
+    [Theory]
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, new[] { TestValues.JsonResultBundleCss })]
+    [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, "InvalidBundle.css", new string[0])]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, new[] { TestValues.JsonResultBundleCss })]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, "InvalidBundle.css", new string[0])]
+    [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleCss, new string[0])]
+    public async Task GetCssFromManifest_Production_ShouldReturnExpectedCssList(
+        ManifestType manifestType,
+        string httpClientResponse,
+        string bundle,
+        string[] expectedCss)
+    {
+        // Arrange
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, manifestType);
+        var httpClientFactoryMock = DependencyMocker.GetHttpClientFactory(HttpStatusCode.OK, httpClientResponse, true);
+        var fileSystemMock = DependencyMocker.GetFileSystem(httpClientResponse);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object, httpClientFactoryMock.Object);
+
+        // Act
+        var result = await _manifestService.GetCssFromManifestAsync(bundle);
+
+        // Assert
+        result.Should().Equal(expectedCss);
+    }
+
+    [Fact]
+    public async Task GetCssFromManifest_ViteCssOnImportedChunk_ShouldFollowImports()
+    {
+        // Arrange - Vite assigns CSS to the chunk that imports it. When an entry
+        // depends on a shared chunk (typical for layouts), the entry's `css` field
+        // is empty and the CSS lives on the imported chunk's manifest entry.
+        const string manifest = """
+                                {
+                                  "Assets/Layout.bundle.ts": {
+                                    "file": "Layout-DEBycRcF.js",
+                                    "name": "Layout",
+                                    "src": "Assets/Layout.bundle.ts",
+                                    "imports": ["__Layout.cshtml-B7H2t3_E.js"]
+                                  },
+                                  "__Layout.cshtml-B7H2t3_E.js": {
+                                    "file": "_Layout.cshtml-B7H2t3_E.js",
+                                    "name": "_Layout.cshtml",
+                                    "css": ["_Layout-WWSQZMs6.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetCssFromManifestAsync("Layout.css");
+
+        // Assert
+        result.Should().Equal("_Layout-WWSQZMs6.css");
+    }
+
+    [Fact]
+    public async Task GetCssFromManifest_ViteTransitiveImports_ShouldReturnDependencyFirstOrder()
+    {
+        // Arrange - cascade order: imports' CSS first (foundation), entry's CSS last (overrides).
+        const string manifest = """
+                                {
+                                  "src/entry.ts": {
+                                    "file": "entry.js",
+                                    "name": "entry",
+                                    "imports": ["chunk-mid.js"],
+                                    "css": ["entry.css"]
+                                  },
+                                  "chunk-mid.js": {
+                                    "file": "chunk-mid.js",
+                                    "name": "mid",
+                                    "imports": ["chunk-leaf.js"],
+                                    "css": ["mid.css"]
+                                  },
+                                  "chunk-leaf.js": {
+                                    "file": "chunk-leaf.js",
+                                    "name": "leaf",
+                                    "css": ["leaf.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetCssFromManifestAsync("entry.css");
+
+        // Assert
+        result.Should().Equal("leaf.css", "mid.css", "entry.css");
+    }
+
+    [Fact]
+    public async Task GetCssFromManifest_ViteSharedImport_ShouldDeduplicate()
+    {
+        // Arrange - two import paths reach the same shared chunk; its CSS must appear once.
+        const string manifest = """
+                                {
+                                  "src/entry.ts": {
+                                    "file": "entry.js",
+                                    "name": "entry",
+                                    "imports": ["chunk-b.js", "chunk-c.js"]
+                                  },
+                                  "chunk-b.js": {
+                                    "file": "chunk-b.js",
+                                    "name": "b",
+                                    "imports": ["chunk-shared.js"]
+                                  },
+                                  "chunk-c.js": {
+                                    "file": "chunk-c.js",
+                                    "name": "c",
+                                    "imports": ["chunk-shared.js"]
+                                  },
+                                  "chunk-shared.js": {
+                                    "file": "chunk-shared.js",
+                                    "name": "shared",
+                                    "css": ["shared.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetCssFromManifestAsync("entry.css");
+
+        // Assert
+        result.Should().Equal("shared.css");
+    }
+
+    [Fact]
+    public async Task GetCssFromManifest_ViteImportCycle_ShouldNotLoop()
+    {
+        // Arrange - manifest with a cycle between two chunks; walking must terminate.
+        const string manifest = """
+                                {
+                                  "a.js": {
+                                    "file": "a.js",
+                                    "name": "a",
+                                    "imports": ["b.js"],
+                                    "css": ["a.css"]
+                                  },
+                                  "b.js": {
+                                    "file": "b.js",
+                                    "name": "b",
+                                    "imports": ["a.js"],
+                                    "css": ["b.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetCssFromManifestAsync("a.css");
+
+        // Assert
+        result.Should().Equal("b.css", "a.css");
     }
 
     [Fact]

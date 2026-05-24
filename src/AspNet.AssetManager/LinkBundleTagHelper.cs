@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -13,15 +14,13 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 namespace AspNet.AssetManager;
 
 /// <summary>
-/// A TagHelper responsible for rendering a link tag for CSS bundles.
+/// A TagHelper responsible for rendering link tags for CSS bundles. May emit multiple
+/// <c>&lt;link&gt;</c> elements when the bundle's import graph contributes more than one
+/// stylesheet (typical for Vite manifests with shared chunks or vendor splits).
 /// </summary>
 [OutputElementHint("link")]
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-public class LinkBundleTagHelper(
-    IHtmlHelper htmlHelper,
-    IAssetService assetService,
-    IAssetConfiguration assetConfiguration)
-    : TagHelper
+public class LinkBundleTagHelper(IHtmlHelper htmlHelper, IAssetService assetService) : TagHelper
 {
     /// <summary>
     /// Gets or sets the context information about the current view rendering process.
@@ -44,10 +43,10 @@ public class LinkBundleTagHelper(
     public string? Fallback { get; set; }
 
     /// <summary>
-    /// Processes the tag helper and modifies the output to render a link tag for a CSS bundle.
+    /// Processes the tag helper and writes one or more link tags for the resolved bundle.
     /// </summary>
     /// <param name="context">The context associated with the tag helper execution.</param>
-    /// <param name="output">The output that will be modified for rendering the link tag.</param>
+    /// <param name="output">The output that will be modified for rendering the link tags.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
     {
@@ -58,25 +57,16 @@ public class LinkBundleTagHelper(
             aware.Contextualize(ViewContext);
         }
 
-        output.TagName = "link";
-        output.TagMode = TagMode.SelfClosing;
-
         var bundle = Name ?? ViewContext.ViewData.GetBundleName() ?? htmlHelper.GetBundleName();
-        var file = await assetService.GetLinkHref(bundle, Fallback).ConfigureAwait(false);
+        var html = await assetService.GetLinkTagAsync(bundle, Fallback).ConfigureAwait(false);
 
-        if (file is null)
+        if (html == HtmlString.Empty)
         {
             output.SuppressOutput();
             return;
         }
 
-        output.Attributes.SetAttribute("href", $"{assetConfiguration.AssetsWebPath}{file}");
-
-        output.Attributes.SetAttribute("rel", "stylesheet");
-
-        if (assetConfiguration.DevelopmentMode)
-        {
-            output.Attributes.SetAttribute("crossorigin", "anonymous");
-        }
+        output.TagName = null;
+        output.Content.SetHtmlContent(html);
     }
 }

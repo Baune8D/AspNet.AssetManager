@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -42,31 +41,26 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
     {
         ArgumentNullException.ThrowIfNull(bundle);
 
-        JsonDocument manifest;
+        var manifest = await LoadManifestAsync().ConfigureAwait(false);
 
-        if (_manifest == null)
-        {
-            var json = assetConfiguration.DevelopmentMode
-                ? await FetchDevelopmentManifestAsync(HttpClient, assetConfiguration.ManifestPath).ConfigureAwait(false)
-                : await fileSystem.File.ReadAllTextAsync(assetConfiguration.ManifestPath).ConfigureAwait(false);
+        return assetConfiguration.ManifestType == ManifestType.Vite
+            ? GetFromViteManifest(manifest, bundle)
+            : GetFromKeyValueManifest(manifest, bundle);
+    }
 
-            manifest = JsonDocument.Parse(json);
-            if (!assetConfiguration.DevelopmentMode)
-            {
-                _manifest = manifest;
-            }
-        }
-        else
-        {
-            manifest = _manifest;
-        }
+    public async Task<IReadOnlyList<string>> GetCssFromManifestAsync(string bundle)
+    {
+        ArgumentNullException.ThrowIfNull(bundle);
+
+        var manifest = await LoadManifestAsync().ConfigureAwait(false);
 
         if (assetConfiguration.ManifestType == ManifestType.Vite)
         {
-            return GetFromViteManifest(manifest, bundle);
+            return GetCssFromViteManifest(manifest, bundle);
         }
 
-        return GetFromKeyValueManifest(manifest, bundle);
+        var single = GetFromKeyValueManifest(manifest, bundle);
+        return single != null ? [single] : [];
     }
 
     public async Task<string> GetFileContentAsync(string file)
@@ -99,6 +93,27 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
         return content;
     }
 
+    private async Task<JsonDocument> LoadManifestAsync()
+    {
+        if (_manifest != null)
+        {
+            return _manifest;
+        }
+
+        var json = assetConfiguration.DevelopmentMode
+            ? await FetchDevelopmentManifestAsync(HttpClient, assetConfiguration.ManifestPath).ConfigureAwait(false)
+            : await fileSystem.File.ReadAllTextAsync(assetConfiguration.ManifestPath).ConfigureAwait(false);
+
+        var manifest = JsonDocument.Parse(json);
+
+        if (!assetConfiguration.DevelopmentMode)
+        {
+            _manifest = manifest;
+        }
+
+        return manifest;
+    }
+
     private static string? GetFromKeyValueManifest(JsonDocument manifest, string bundle)
     {
         try
@@ -129,24 +144,80 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
                 continue;
             }
 
-            if (!bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
-            {
-                return assetConfiguration.DevelopmentMode
-                    ? entry.GetProperty("src").GetString()
-                    : entry.GetProperty("file").GetString();
-            }
-
-            if (entry.TryGetProperty("css", out var css))
-            {
-                return css.EnumerateArray()
-                    .Select(cssElement => cssElement.GetString() ?? string.Empty)
-                    .FirstOrDefault(value => value.StartsWith(nameToFind, StringComparison.Ordinal));
-            }
-
-            return null;
+            return assetConfiguration.DevelopmentMode
+                ? entry.GetProperty("src").GetString()
+                : entry.GetProperty("file").GetString();
         }
 
         return null;
+    }
+
+    private static List<string> GetCssFromViteManifest(JsonDocument manifest, string bundle)
+    {
+        var nameToFind = Path.GetFileNameWithoutExtension(bundle);
+
+        foreach (var property in manifest.RootElement.EnumerateObject())
+        {
+            var entry = property.Value;
+
+            if (!entry.TryGetProperty("name", out var nameProperty))
+            {
+                continue;
+            }
+
+            if (nameProperty.GetString() != nameToFind)
+            {
+                continue;
+            }
+
+            var result = new List<string>();
+            var visited = new HashSet<string>(StringComparer.Ordinal) { property.Name };
+            CollectCssFromViteEntry(manifest.RootElement, entry, result, visited);
+            return result;
+        }
+
+        return [];
+    }
+
+    // Vite's manifest stores CSS on the chunk that imports it, not on the entry that depends
+    // on the chunk. To get the full stylesheet set for an entry we walk its `imports` graph
+    // depth-first (deepest dependency first) and append each chunk's own `css` entries last.
+    // This matches the order Vite's dev runtime injects styles, so cascade behavior is the
+    // same in dev and prod.
+    private static void CollectCssFromViteEntry(
+        JsonElement root,
+        JsonElement entry,
+        List<string> result,
+        HashSet<string> visited)
+    {
+        if (entry.TryGetProperty("imports", out var imports) && imports.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var importElement in imports.EnumerateArray())
+            {
+                var importKey = importElement.GetString();
+                if (string.IsNullOrEmpty(importKey) || !visited.Add(importKey))
+                {
+                    continue;
+                }
+
+                if (root.TryGetProperty(importKey, out var importedEntry))
+                {
+                    CollectCssFromViteEntry(root, importedEntry, result, visited);
+                }
+            }
+        }
+
+        if (entry.TryGetProperty("css", out var css) && css.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var cssElement in css.EnumerateArray())
+            {
+                var value = cssElement.GetString();
+                if (!string.IsNullOrEmpty(value) && !result.Contains(value))
+                {
+                    result.Add(value);
+                }
+            }
+        }
     }
 
     private static async Task<string> FetchDevelopmentManifestAsync(HttpClient? httpClient, string manifestPath)

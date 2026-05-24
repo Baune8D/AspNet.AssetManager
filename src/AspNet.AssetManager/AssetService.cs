@@ -4,8 +4,10 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Html;
 
@@ -58,7 +60,16 @@ internal sealed class AssetService : IAssetService
             };
         }
 
-        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+        string? file;
+        if (bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
+        {
+            var cssFiles = await _manifestService.GetCssFromManifestAsync(bundle).ConfigureAwait(false);
+            file = cssFiles.Count > 0 ? cssFiles[0] : null;
+        }
+        else
+        {
+            file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+        }
 
         return file != null
             ? $"{WebPath}{file}"
@@ -85,28 +96,54 @@ internal sealed class AssetService : IAssetService
             : HtmlString.Empty;
     }
 
-    public async Task<string?> GetLinkHref(string bundle, string? fallback = null)
+    public async Task<IReadOnlyList<string>> GetLinkHrefs(string bundle, string? fallback = null)
     {
-        return await GetCssBundleName(bundle).ConfigureAwait(false)
-               ?? await GetCssBundleName(fallback).ConfigureAwait(false);
+        var files = await GetCssBundleFiles(bundle).ConfigureAwait(false);
+        return files.Count > 0
+            ? files
+            : await GetCssBundleFiles(fallback).ConfigureAwait(false);
     }
 
     public async Task<HtmlString> GetLinkTagAsync(string bundle, string? fallback = null)
     {
-        var file = await GetLinkHref(bundle, fallback).ConfigureAwait(false);
+        var files = await GetLinkHrefs(bundle, fallback).ConfigureAwait(false);
 
-        return file != null
-            ? new HtmlString(_tagBuilder.BuildLinkTag(file))
-            : HtmlString.Empty;
+        if (files.Count == 0)
+        {
+            return HtmlString.Empty;
+        }
+
+        var sb = new StringBuilder();
+        for (var i = 0; i < files.Count; i++)
+        {
+            if (i > 0)
+            {
+                sb.Append('\n');
+            }
+
+            sb.Append(_tagBuilder.BuildLinkTag(files[i]));
+        }
+
+        return new HtmlString(sb.ToString());
     }
 
     public async Task<string?> GetStyleContent(string bundle, string? fallback = null)
     {
-        var file = await GetLinkHref(bundle, fallback).ConfigureAwait(false);
+        var files = await GetLinkHrefs(bundle, fallback).ConfigureAwait(false);
 
-        return file != null
-            ? await _manifestService.GetFileContentAsync(file).ConfigureAwait(false)
-            : null;
+        if (files.Count == 0)
+        {
+            return null;
+        }
+
+        var sb = new StringBuilder();
+        foreach (var file in files)
+        {
+            var content = await _manifestService.GetFileContentAsync(file).ConfigureAwait(false);
+            sb.Append(content);
+        }
+
+        return sb.ToString();
     }
 
     public async Task<HtmlString> GetStyleTagAsync(string bundle, string? fallback = null)
@@ -129,15 +166,15 @@ internal sealed class AssetService : IAssetService
         return await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
     }
 
-    private async Task<string?> GetCssBundleName(string? bundle)
+    private async Task<IReadOnlyList<string>> GetCssBundleFiles(string? bundle)
     {
         if (string.IsNullOrEmpty(bundle))
         {
-            return null;
+            return [];
         }
 
         bundle = TryFixBundleName(bundle, "css");
-        return await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
+        return await _manifestService.GetCssFromManifestAsync(bundle).ConfigureAwait(false);
     }
 
     private static string TryFixBundleName(string bundle, string extension)

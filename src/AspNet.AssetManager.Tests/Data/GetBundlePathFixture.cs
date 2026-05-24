@@ -3,6 +3,7 @@
 // Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 // </copyright>
 
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using AwesomeAssertions;
@@ -21,6 +22,7 @@ internal sealed class GetBundlePathFixture : AssetServiceFixture
         Bundle = bundle;
         FileType = fileType;
         SetupGetFromManifest();
+        SetupGetCssFromManifest();
     }
 
     private string Bundle { get; }
@@ -67,13 +69,21 @@ internal sealed class GetBundlePathFixture : AssetServiceFixture
         switch (FileType)
         {
             case AssetManager.FileType.CSS:
-                VerifyGetFromManifest(BundleWithCssExtension);
+                VerifyGetCssFromManifest(BundleWithCssExtension);
                 break;
             case AssetManager.FileType.JS:
                 VerifyGetFromManifest(BundleWithJsExtension);
                 break;
             case null:
-                VerifyGetFromManifest(Bundle);
+                if (Bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
+                {
+                    VerifyGetCssFromManifest(Bundle);
+                }
+                else
+                {
+                    VerifyGetFromManifest(Bundle);
+                }
+
                 break;
             default:
                 throw new InvalidEnumArgumentException(nameof(FileType), (int)FileType, typeof(FileType));
