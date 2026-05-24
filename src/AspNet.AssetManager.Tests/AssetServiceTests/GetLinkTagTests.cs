@@ -63,7 +63,6 @@ public sealed class GetLinkTagTests
         result.Should().Be("a {}b {}");
     }
 
-
     [Fact]
     public async Task GetLinkTag_EmptyString_ShouldReturnEmptyHtmlString()
     {
