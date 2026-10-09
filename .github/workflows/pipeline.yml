@@ -8,22 +8,19 @@ on:
     tags:
       - 'v*'
 
-env:
-  DOTNET_VERSION: '10.0.x'
-
 jobs:
 
   pipeline:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Setup .NET ${{ env.DOTNET_VERSION }}
-        uses: actions/setup-dotnet@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          global-json-file: global.json
           cache: true
           cache-dependency-path: '**/packages.lock.json'
       - name: Execute NUKE
