@@ -22,7 +22,6 @@ internal sealed class GetBundlePathFixture : AssetServiceFixture
         Bundle = bundle;
         FileType = fileType;
         SetupGetFromManifest();
-        SetupGetCssFromManifest();
     }
 
     private string Bundle { get; }
@@ -69,21 +68,13 @@ internal sealed class GetBundlePathFixture : AssetServiceFixture
         switch (FileType)
         {
             case AssetManager.FileType.CSS:
-                VerifyGetCssFromManifest(BundleWithCssExtension);
+                VerifyGetFromManifest(BundleWithCssExtension);
                 break;
             case AssetManager.FileType.JS:
                 VerifyGetFromManifest(BundleWithJsExtension);
                 break;
             case null:
-                if (Bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
-                {
-                    VerifyGetCssFromManifest(Bundle);
-                }
-                else
-                {
-                    VerifyGetFromManifest(Bundle);
-                }
-
+                VerifyGetFromManifest(Bundle);
                 break;
             default:
                 throw new InvalidEnumArgumentException(nameof(FileType), (int)FileType, typeof(FileType));

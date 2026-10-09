@@ -23,7 +23,7 @@ internal static class TestValues
 
     public const string JsonResultBundleJs = $"{JsonBundleName}.min.js";
 
-    public const string JsonResultBundleCss = $"{JsonBundleName}.min.js";
+    public const string JsonResultBundleCss = $"{JsonBundleName}.min.css";
 
     public const string JsonSrcBundleJs = $"Assets/{JsonBundleName}.min.js";
 }

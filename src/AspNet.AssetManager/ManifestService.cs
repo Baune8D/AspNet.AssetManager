@@ -144,12 +144,41 @@ internal sealed class ManifestService(IAssetConfiguration assetConfiguration, IF
                 continue;
             }
 
+            if (bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
+            {
+                return GetPrimaryCssFromViteEntry(manifest.RootElement, property);
+            }
+
             return assetConfiguration.DevelopmentMode
                 ? entry.GetProperty("src").GetString()
                 : entry.GetProperty("file").GetString();
         }
 
         return null;
+    }
+
+    // A Vite entry can have several stylesheets. When a single one is requested, use the
+    // entry's own stylesheet, or the nearest imported one if the entry has none. In
+    // dependency-first order the nearest import is the last item, while the first item is
+    // usually a stylesheet shared with other entries.
+    private static string? GetPrimaryCssFromViteEntry(JsonElement root, JsonProperty property)
+    {
+        if (property.Value.TryGetProperty("css", out var css) && css.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var cssElement in css.EnumerateArray())
+            {
+                var value = cssElement.GetString();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    return value;
+                }
+            }
+        }
+
+        var result = new List<string>();
+        var visited = new HashSet<string>(StringComparer.Ordinal) { property.Name };
+        CollectCssFromViteEntry(root, property.Value, result, visited);
+        return result.Count > 0 ? result[^1] : null;
     }
 
     private static List<string> GetCssFromViteManifest(JsonDocument manifest, string bundle)

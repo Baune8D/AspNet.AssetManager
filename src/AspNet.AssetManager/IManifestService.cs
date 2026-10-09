@@ -21,6 +21,11 @@ public interface IManifestService
     /// A task representing the asynchronous operation.
     /// On completion, contains the asset filename or null if the bundle does not exist.
     /// </returns>
+    /// <remarks>
+    /// For a <c>.css</c> bundle in a Vite manifest, this returns the entry's own stylesheet,
+    /// or the nearest imported stylesheet if the entry has none. Use
+    /// <see cref="GetCssFromManifestAsync"/> to get all of a bundle's stylesheets.
+    /// </remarks>
     Task<string?> GetFromManifestAsync(string bundle);
 
     /// <summary>

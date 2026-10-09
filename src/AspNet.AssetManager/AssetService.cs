@@ -60,16 +60,7 @@ internal sealed class AssetService : IAssetService
             };
         }
 
-        string? file;
-        if (bundle.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
-        {
-            var cssFiles = await _manifestService.GetCssFromManifestAsync(bundle).ConfigureAwait(false);
-            file = cssFiles.Count > 0 ? cssFiles[0] : null;
-        }
-        else
-        {
-            file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
-        }
+        var file = await _manifestService.GetFromManifestAsync(bundle).ConfigureAwait(false);
 
         return file != null
             ? $"{WebPath}{file}"

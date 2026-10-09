@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using AspNet.AssetManager.Tests.Data;
 using AwesomeAssertions;
+using Moq;
 using Xunit;
 
 namespace AspNet.AssetManager.Tests.AssetServiceTests;
@@ -106,5 +107,41 @@ public sealed class GetBundlePathTests
 
         // Assert
         fixture.VerifyExisting(result);
+    }
+
+    [Theory]
+    [InlineData("Views_Home_Index.css", "Views_Home_Index-C1.css")]
+    [InlineData(null, "Views_Home_Index-C1.css")]
+    public async Task GetBundlePath_ViteCssBundleImportingSharedChunk_ShouldReturnEntryStylesheet(string? bundle, string expectedFile)
+    {
+        // Arrange - the view entry imports the layout chunk, which has a shared stylesheet.
+        // The bundle path must point at the view's own stylesheet, not the shared one.
+        const string manifest = """
+                                {
+                                  "Views/Home/Index.cshtml.ts": {
+                                    "file": "Views_Home_Index-D1.js",
+                                    "name": "Views_Home_Index",
+                                    "imports": ["__Layout.cshtml-B7.js"],
+                                    "css": ["Views_Home_Index-C1.css"]
+                                  },
+                                  "__Layout.cshtml-B7.js": {
+                                    "file": "_Layout.cshtml-B7.js",
+                                    "name": "_Layout.cshtml",
+                                    "css": ["_Layout-WW.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfiguration = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite).Object;
+        using var manifestService = new ManifestService(assetConfiguration, DependencyMocker.GetFileSystem(manifest).Object);
+        var assetService = new AssetService(assetConfiguration, manifestService, new Mock<ITagBuilder>().Object);
+
+        // Act
+        var result = bundle != null
+            ? await assetService.GetBundlePathAsync(bundle)
+            : await assetService.GetBundlePathAsync("Views_Home_Index", FileType.CSS);
+
+        // Assert
+        result.Should().Be($"{TestValues.AssetsWebPath}{expectedFile}");
     }
 }

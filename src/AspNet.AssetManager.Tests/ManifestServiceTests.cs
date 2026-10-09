@@ -140,6 +140,7 @@ public sealed class ManifestServiceTests : IDisposable
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleJs, TestValues.JsonSrcBundleJs)]
+    [InlineData(ManifestType.Vite, HttpClientViteDevResponse, TestValues.JsonBundleCss, null)]
     public async Task GetFromManifest_DevelopmentValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string? resultBundle)
     {
         // Arrange
@@ -187,6 +188,7 @@ public sealed class ManifestServiceTests : IDisposable
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
     [InlineData(ManifestType.KeyValue, HttpClientKeyValueResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleJs, TestValues.JsonResultBundleJs)]
+    [InlineData(ManifestType.Vite, HttpClientViteResponse, TestValues.JsonBundleCss, TestValues.JsonResultBundleCss)]
     public async Task GetFromManifest_ProductionValidBundle_ShouldReturnResultBundle(ManifestType manifestType, string httpClientResponse, string bundle, string resultBundle)
     {
         // Arrange
@@ -248,6 +250,98 @@ public sealed class ManifestServiceTests : IDisposable
 
         // Assert
         result.Should().Equal(expectedCss);
+    }
+
+    [Fact]
+    public async Task GetFromManifest_ViteCssWithImportedChunkCss_ShouldReturnEntryCss()
+    {
+        // Arrange - the entry has its own stylesheet and imports a chunk with a shared one.
+        // A single CSS path for the bundle must be the entry's own stylesheet, not the shared one.
+        const string manifest = """
+                                {
+                                  "Views/Home/Index.cshtml.ts": {
+                                    "file": "Views_Home_Index-D1.js",
+                                    "name": "Views_Home_Index",
+                                    "imports": ["__Layout.cshtml-B7.js"],
+                                    "css": ["Views_Home_Index-C1.css"]
+                                  },
+                                  "__Layout.cshtml-B7.js": {
+                                    "file": "_Layout.cshtml-B7.js",
+                                    "name": "_Layout.cshtml",
+                                    "css": ["_Layout-WW.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFromManifestAsync("Views_Home_Index.css");
+
+        // Assert
+        result.Should().Be("Views_Home_Index-C1.css");
+    }
+
+    [Fact]
+    public async Task GetFromManifest_ViteCssOnlyOnImportedChunks_ShouldReturnNearestImportCss()
+    {
+        // Arrange - the entry has no stylesheet of its own. Its CSS lives on imported chunks,
+        // so the nearest one (the last in dependency-first order) is the bundle's stylesheet.
+        const string manifest = """
+                                {
+                                  "Assets/Layout.bundle.ts": {
+                                    "file": "Layout-DE.js",
+                                    "name": "Layout",
+                                    "imports": ["__Layout.cshtml-B7.js"]
+                                  },
+                                  "__Layout.cshtml-B7.js": {
+                                    "file": "_Layout.cshtml-B7.js",
+                                    "name": "_Layout.cshtml",
+                                    "imports": ["_vendor-V1.js"],
+                                    "css": ["_Layout-WW.css"]
+                                  },
+                                  "_vendor-V1.js": {
+                                    "file": "vendor-V1.js",
+                                    "css": ["vendor-V1.css"]
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFromManifestAsync("Layout.css");
+
+        // Assert
+        result.Should().Be("_Layout-WW.css");
+    }
+
+    [Fact]
+    public async Task GetFromManifest_ViteCssWithoutAnyStylesheet_ShouldReturnNull()
+    {
+        // Arrange
+        const string manifest = """
+                                {
+                                  "Assets/Script.bundle.ts": {
+                                    "file": "Script-S1.js",
+                                    "name": "Script"
+                                  }
+                                }
+                                """;
+
+        var assetConfigurationMock = DependencyMocker.GetAssetConfiguration(TestValues.Production, ManifestType.Vite);
+        var fileSystemMock = DependencyMocker.GetFileSystem(manifest);
+        _manifestService = new ManifestService(assetConfigurationMock.Object, fileSystemMock.Object);
+
+        // Act
+        var result = await _manifestService.GetFromManifestAsync("Script.css");
+
+        // Assert
+        result.Should().BeNull();
     }
 
     [Fact]
