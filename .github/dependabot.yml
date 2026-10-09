@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nuget:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: /src/AspNet.AssetManager.Demo
+    schedule:
+      interval: weekly
+    groups:
+      npm:
+        patterns: ['*']
+        update-types: [minor, patch]
