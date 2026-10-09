@@ -4,28 +4,51 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    ignore:
+      # Major versions are updated manually
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
     groups:
       nuget:
+        applies-to: version-updates
         patterns: ['*']
-        update-types: [minor, patch]
-
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-    groups:
-      github-actions:
+      nuget-security:
+        applies-to: security-updates
         patterns: ['*']
 
   - package-ecosystem: npm
     directory: /src/AspNet.AssetManager.Demo
     schedule:
       interval: weekly
-    groups:
-      npm:
-        patterns: ['*']
-        update-types: [minor, patch]
+      day: monday
+    cooldown:
+      default-days: 7
     ignore:
+      # Major versions are updated manually
+      - dependency-name: '*'
+        update-types: [version-update:semver-major]
       # Keep in line with the default ASP.NET Core templates, which use jQuery 3
       - dependency-name: jquery
         update-types: [version-update:semver-major]
+    groups:
+      npm:
+        applies-to: version-updates
+        patterns: ['*']
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ['*']
