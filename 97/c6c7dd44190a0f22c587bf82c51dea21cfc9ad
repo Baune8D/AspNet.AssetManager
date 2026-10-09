@@ -1,0 +1,31 @@
+src/AspNet.AssetManager.Tests/AssetServiceTests/GetBundlePathTests.cs
+  s_69f2c8858309b0::t_b82a2e9e0fb3a3 10,111-146
+src/AspNet.AssetManager.Tests/Data/GetBundlePathFixture.cs
+  s_69f2c8858309b0::t_239e1fddbf6e9b 71,77
+src/AspNet.AssetManager.Tests/Data/TestValues.cs
+  s_69f2c8858309b0::t_c9cd7a83d1a65e 26
+src/AspNet.AssetManager.Tests/ManifestServiceTests.cs
+  s_69f2c8858309b0::t_bfbdd223019946 143,191,255-346
+src/AspNet.AssetManager/AssetService.cs
+  s_69f2c8858309b0::t_1109380c22fde7 63
+src/AspNet.AssetManager/IManifestService.cs
+  s_69f2c8858309b0::t_79a43fb34e5f4e 24-28
+src/AspNet.AssetManager/ManifestService.cs
+  s_69f2c8858309b0::t_d7046b8bb0d314 147-151,160-183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "97c6c7dd44190a0f22c587bf82c51dea21cfc9ad",
+  "prompts": {},
+  "sessions": {
+    "s_69f2c8858309b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2eaf013-e685-48e9-b88c-54631d8f3648",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Morten Larsen <mortenl41@gmail.com>"
+    }
+  }
+}
