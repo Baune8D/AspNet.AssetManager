@@ -1,0 +1,19 @@
+.github/dependabot.yml
+  s_69f2c8858309b0::t_7ed2f453f0466a 7-13,16,18-19,26-28,30-32,36-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "48061f9799df3e1d7351644add109f0d6a73870d",
+  "prompts": {},
+  "sessions": {
+    "s_69f2c8858309b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2eaf013-e685-48e9-b88c-54631d8f3648",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Morten Larsen <mortenl41@gmail.com>"
+    }
+  }
+}
