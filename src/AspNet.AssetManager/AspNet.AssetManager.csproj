@@ -4,12 +4,13 @@
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <Authors>Baune8D</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Description>Utilities for managing modern frontend build tools in ASP.NET projects</Description>
+    <Description>Use Vite or Webpack with ASP.NET Core MVC and Razor Pages. Tag helpers that read your bundler's manifest and render script and link tags from the dev server in development and from hashed static files in production.</Description>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Baune8D/AspNet.AssetManager</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Baune8D/AspNet.AssetManager</PackageProjectUrl>
-    <PackageTags>ASP.NET, Webpack, Vite</PackageTags>
+    <PackageTags>aspnetcore;mvc;razor;razor-pages;taghelpers;vite;webpack;frontend;assets;bundling;manifest;hmr</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>https://github.com/Baune8D/AspNet.AssetManager/releases</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
