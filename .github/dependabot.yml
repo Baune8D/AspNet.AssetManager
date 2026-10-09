@@ -25,3 +25,7 @@ updates:
       npm:
         patterns: ['*']
         update-types: [minor, patch]
+    ignore:
+      # Keep in line with the default ASP.NET Core templates, which use jQuery 3
+      - dependency-name: jquery
+        update-types: [version-update:semver-major]
