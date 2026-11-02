@@ -68,6 +68,7 @@ Use these sections, omitting empty ones, and end with a compare link:
 
 - `./build.sh Test` builds and runs the tests for all target frameworks. This machine only has the .NET 10 runtime; use `DOTNET_ROLL_FORWARD=Major ./build.sh Test` to run the net8.0/net9.0 tests on it. CI has all three runtimes.
 - `global.json` is required: DotNet.ReproducibleBuilds 2.x warns without it, and warnings are errors (`TreatWarningsAsErrors`, `AnalysisMode=All`).
+- `TreatWarningsAsErrors` also turns NuGet's vulnerability warnings (NU1901 to NU1904) into errors, so a newly published advisory for any dependency, direct or transitive, fails the restore (in CI too) until the package is updated or overridden.
 - `build/_build.csproj` pins `NuGet.Packaging` and `System.Security.Cryptography.Xml` to patch vulnerable dependencies of Nuke.Common (NuGet 7.9 also fixes a `NuGet.Frameworks` load error with SDK 10.0.4xx). Remove the pins once Nuke.Common ships fixed versions.
 - `src/AspNet.AssetManager.Demo` is a Webpack MVC app for trying changes: `npm install && npm start`, then `dotnet run`.
 
