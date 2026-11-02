@@ -56,6 +56,7 @@ Use these sections, omitting empty ones, and end with a compare link:
 - New exceptions go in `.github/dependabot.yml` with a comment explaining why.
 - Before holding a package back, find the root cause and check the package's issue tracker. A failing upgrade is often caused by something else (sass-loader 17 failed because of `ts-node`), and upstream issues often list a workaround (fork-ts-checker-webpack-plugin 9.1).
 - The AspNet.AssetManager demo and the templates mirror the default ASP.NET Core templates, so they stay on jQuery 3 (`jquery-validation-unobtrusive` also requires it).
+- Dependabot restores each target framework separately in projects with more than two, so the lock files in its NuGet PRs only keep the last one. `dependabot-lock-files.yml` regenerates them, pushes the fix with `[skip ci]` and starts the pipeline, which reports a `pipeline` commit status on the PR. Dependabot doesn't rebase a PR that has someone else's commit; comment `@dependabot recreate` to update one.
 
 ## Verifying changes
 
