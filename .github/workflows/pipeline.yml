@@ -7,10 +7,16 @@ on:
       - main
     tags:
       - 'v*'
+  workflow_dispatch: # started by dependabot-lock-files.yml
 
 jobs:
 
   pipeline:
+    # Dependabot's NuGet PRs are built by dependabot-lock-files.yml after it fixes their lock files
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.user.login != 'dependabot[bot]' ||
+      !startsWith(github.head_ref, 'dependabot/nuget/')
     runs-on: ubuntu-24.04
     permissions:
       contents: read
