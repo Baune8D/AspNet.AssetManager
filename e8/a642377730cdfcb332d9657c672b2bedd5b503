@@ -1,0 +1,19 @@
+src/AspNet.AssetManager.Demo/package-lock.json
+  s_1da20591e67452::t_dcb4811460d231 1362-1364,1369,1372,1374
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e8a642377730cdfcb332d9657c672b2bedd5b503",
+  "prompts": {},
+  "sessions": {
+    "s_1da20591e67452": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "56de8afb-cd13-4b9c-b07e-fc995dbca6f0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Morten Larsen <mortenl41@gmail.com>"
+    }
+  }
+}
