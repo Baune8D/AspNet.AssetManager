@@ -1,0 +1,103 @@
+src/AspNet.AssetManager.Tests/AssetConfigurationTests.cs
+  s_1da20591e67452::t_8e6f9dc00c28e5 3
+src/AspNet.AssetManager.Tests/AssetServiceTests/ConstructorTests.cs
+  s_1da20591e67452::t_66bb5c66f6d920 3
+src/AspNet.AssetManager.Tests/AssetServiceTests/GetBundlePathTests.cs
+  s_1da20591e67452::t_1b04cd2266e7ee 3
+src/AspNet.AssetManager.Tests/AssetServiceTests/GetLinkTagTests.cs
+  s_1da20591e67452::t_c901a2cb9914b4 3
+src/AspNet.AssetManager.Tests/AssetServiceTests/GetScriptTagTests.cs
+  s_1da20591e67452::t_53ed6f92374e45 3
+src/AspNet.AssetManager.Tests/AssetServiceTests/GetStyleTagTests.cs
+  s_1da20591e67452::t_b4f2ddd366d69c 3
+src/AspNet.AssetManager.Tests/Data/AssetServiceFixture.cs
+  s_1da20591e67452::t_cb9acba451b833 3
+src/AspNet.AssetManager.Tests/Data/DependencyMocker.cs
+  s_1da20591e67452::t_d3f157a4aa691c 3
+src/AspNet.AssetManager.Tests/Data/GetBundlePathFixture.cs
+  s_1da20591e67452::t_b4d7457ca2101b 3
+src/AspNet.AssetManager.Tests/Data/GetLinkTagFixture.cs
+  s_1da20591e67452::t_d57478177f2ce1 3
+src/AspNet.AssetManager.Tests/Data/GetScriptTagFixture.cs
+  s_1da20591e67452::t_51f8c0129bb4db 3
+src/AspNet.AssetManager.Tests/Data/GetStyleTagFixture.cs
+  s_1da20591e67452::t_22604da80a713a 3
+src/AspNet.AssetManager.Tests/Data/HtmlHelperStub.cs
+  s_1da20591e67452::t_5d6c2a4517af22 3
+src/AspNet.AssetManager.Tests/Data/HttpMessageHandlerStub.cs
+  s_1da20591e67452::t_99a47188b95dfd 3
+src/AspNet.AssetManager.Tests/Data/TestValues.cs
+  s_1da20591e67452::t_c3ba318cdee90d 3
+src/AspNet.AssetManager.Tests/Data/ViewStub.cs
+  s_1da20591e67452::t_4729d57796d4d3 3
+src/AspNet.AssetManager.Tests/HtmlHelperExtensionsTests.cs
+  s_1da20591e67452::t_5a1f4154dc84c8 3
+src/AspNet.AssetManager.Tests/ManifestServiceTests.cs
+  s_1da20591e67452::t_3a2e51d49bdfb5 3
+src/AspNet.AssetManager.Tests/Properties/AssemblyInfo.cs
+  s_1da20591e67452::t_3fcb2ce0cb0e7c 3
+src/AspNet.AssetManager.Tests/ServiceCollectionExtensionsTests.cs
+  s_1da20591e67452::t_6350c18c6cafe4 3
+src/AspNet.AssetManager.Tests/TagBuilderTests.cs
+  s_1da20591e67452::t_ac410a906b3718 3
+src/AspNet.AssetManager.Tests/ViewDataExtensionsTests.cs
+  s_1da20591e67452::t_8489d486df20a3 3
+src/AspNet.AssetManager/AssetConfiguration.cs
+  s_1da20591e67452::t_1edb69ca61b001 3
+src/AspNet.AssetManager/AssetManagerOptions.cs
+  s_1da20591e67452::t_410675e80be409 3
+src/AspNet.AssetManager/AssetService.cs
+  s_1da20591e67452::t_08e5d79cac2315 3
+src/AspNet.AssetManager/DevServerException.cs
+  s_1da20591e67452::t_f552e641a9c593 3
+src/AspNet.AssetManager/FileType.cs
+  s_1da20591e67452::t_c2152327b569d3 3
+src/AspNet.AssetManager/HtmlHelperExtensions.cs
+  s_1da20591e67452::t_2bf8a87b99ad67 3
+src/AspNet.AssetManager/IAssetConfiguration.cs
+  s_1da20591e67452::t_9eadd3fbdfe1cc 3
+src/AspNet.AssetManager/IAssetService.cs
+  s_1da20591e67452::t_368e12f65fa4c6 3
+src/AspNet.AssetManager/IManifestService.cs
+  s_1da20591e67452::t_df99ea61889e03 3
+src/AspNet.AssetManager/ITagBuilder.cs
+  s_1da20591e67452::t_d380400755dd03 3
+src/AspNet.AssetManager/LinkBundleTagHelper.cs
+  s_1da20591e67452::t_8c774785934ce7 3
+src/AspNet.AssetManager/ManifestService.cs
+  s_1da20591e67452::t_bcb77dd8560fe7 3
+src/AspNet.AssetManager/ManifestType.cs
+  s_1da20591e67452::t_b1526740fade51 3
+src/AspNet.AssetManager/Properties/AssemblyInfo.cs
+  s_1da20591e67452::t_2fa8bfa3ef99ad 3
+src/AspNet.AssetManager/ScriptBundleTagHelper.cs
+  s_1da20591e67452::t_e70ffa4fc22e47 3
+src/AspNet.AssetManager/ScriptLoad.cs
+  s_1da20591e67452::t_f3afd6c171dc6a 3
+src/AspNet.AssetManager/ServiceCollectionExtensions.cs
+  s_1da20591e67452::t_fc2d9c281c4543 3
+src/AspNet.AssetManager/StyleBundleTagHelper.cs
+  s_1da20591e67452::t_186ac75ec4b00a 3
+src/AspNet.AssetManager/TagBuilder.cs
+  s_1da20591e67452::t_b3a0d778b5061f 3
+src/AspNet.AssetManager/ViewDataExtensions.cs
+  s_1da20591e67452::t_013a01cfab7be6 3
+stylecop.json
+  s_1da20591e67452::t_d41f12a6647a39 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8f845c69bbc0de96ff113d9494933452011f6f55",
+  "prompts": {},
+  "sessions": {
+    "s_1da20591e67452": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "56de8afb-cd13-4b9c-b07e-fc995dbca6f0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Morten Larsen <mortenl41@gmail.com>"
+    }
+  }
+}
