@@ -15,6 +15,8 @@ namespace AspNet.AssetManager;
 /// <summary>
 /// A TagHelper implementation that generates and renders a style tag for a CSS bundle.
 /// </summary>
+/// <param name="htmlHelper">The HTML helper used to infer the bundle name from the current view.</param>
+/// <param name="assetService">The asset service that reads the CSS content of the bundle.</param>
 [OutputElementHint("style")]
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
 public class StyleBundleTagHelper(IHtmlHelper htmlHelper, IAssetService assetService) : TagHelper

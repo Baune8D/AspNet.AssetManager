@@ -16,6 +16,11 @@ namespace AspNet.AssetManager;
 /// A TagHelper implementation that generates a "script" tag for a JavaScript bundle,
 /// with support for fallback, async, and defer attributes.
 /// </summary>
+/// <param name="htmlHelper">The HTML helper used to infer the bundle name from the current view.</param>
+/// <param name="assetService">The asset service that resolves the script path of the bundle.</param>
+/// <param name="assetConfiguration">
+/// The asset configuration that provides the assets web path, the manifest type and the development mode.
+/// </param>
 [OutputElementHint("script")]
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
 public class ScriptBundleTagHelper(

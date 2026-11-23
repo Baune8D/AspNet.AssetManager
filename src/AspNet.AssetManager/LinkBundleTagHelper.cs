@@ -18,6 +18,8 @@ namespace AspNet.AssetManager;
 /// <c>&lt;link&gt;</c> elements when the bundle's import graph contributes more than one
 /// stylesheet (typical for Vite manifests with shared chunks or vendor splits).
 /// </summary>
+/// <param name="htmlHelper">The HTML helper used to infer the bundle name from the current view.</param>
+/// <param name="assetService">The asset service that renders the link tags for the bundle.</param>
 [OutputElementHint("link")]
 [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
 public class LinkBundleTagHelper(IHtmlHelper htmlHelper, IAssetService assetService) : TagHelper
